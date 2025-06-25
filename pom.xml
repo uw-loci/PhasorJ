@@ -4,6 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.scijava</groupId>
+        <artifactId>pom-scijava</artifactId>
+        <version>40.0.0</version>
+    </parent>
+
     <groupId>org</groupId>
     <artifactId>PhasorJ</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -12,6 +18,18 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
+        <scijava.jvm.version>21</scijava.jvm.version>
+
+        <!-- NB: Deploy releases to the SciJava Maven repository. -->
+        <releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
+
+
+        <javafx-base.version>23.0.2</javafx-base.version>
+        <javafx-controls.version>23.0.2</javafx-controls.version>
+        <javafx-fxml.version>23.0.1</javafx-fxml.version>
+        <javafx-graphics.version>23.0.2</javafx-graphics.version>
+        <javafx-swing.version>23.0.1</javafx-swing.version>
+        <controlsfx.version>11.2.1</controlsfx.version>
     </properties>
 
     <dependencies>
@@ -30,31 +48,42 @@
             <artifactId>controlsfx</artifactId>
             <version>11.2.1</version>
         </dependency>
+
         <dependency>
-            <groupId>org.kordamp.bootstrapfx</groupId>
-            <artifactId>bootstrapfx-core</artifactId>
-            <version>0.4.0</version>
+            <groupId>org.scijava</groupId>
+            <artifactId>scijava-common</artifactId>
+        </dependency>
+
+
+                <!-- ImageJ dependencies -->
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej-ops</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>scijava.public</id>
+            <url>https://maven.scijava.org/content/groups/public</url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>21</source>
                     <target>21</target>
