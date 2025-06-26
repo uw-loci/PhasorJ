@@ -1,5 +1,13 @@
 package org.phasorj.ui;
 
+import javafx.scene.image.ImageView;
+import net.imagej.display.ColorTables;
+import net.imagej.ops.OpService;
+import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.converter.RealLUTConverter;
+import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.Views;
 import org.phasorj.ui.controls.NumericSpinner;
 import org.phasorj.ui.controls.NumericTextField;
 
@@ -9,9 +17,33 @@ import javafx.scene.control.*;
 
 
 public class PluginController {
-    //Canvas
-    @FXML private Canvas phasor_plot;
-    @FXML private Canvas image_view;
+    //Image View
+    @FXML private ImageView phasor_plot;
+    @FXML private ImageView image_view;
+
+    /** The converter for the intensity (left) image */
+    private static final RealLUTConverter<FloatType> INTENSITY_CONV =
+            new RealLUTConverter<>(0, 0, ColorTables.GRAYS);
+    private ImageDisplay intensityDisplay;
+
+    /**
+     * Annotates the intensity image and load to the on-screen Image.
+     *
+     * @param intensity the intensity data
+     */
+
+    public void loadAnotatedIntensityImage(final RandomAccessibleInterval<FloatType> intensity) {
+        IterableInterval<FloatType> itr = Views.iterable(intensity);
+
+        double max = Double.NEGATIVE_INFINITY;
+        for (FloatType val : itr) {
+            max = Math.max(max, val.getRealDouble());
+        }
+        INTENSITY_CONV.setMax(max);
+
+        intensityDisplay.setImage(intensity, INTENSITY_CONV,
+                (srcRA, lutedRA) -> lutedRA.get());
+    }
 
     //Parameters
     @FXML private NumericSpinner intensity_up;
@@ -29,8 +61,13 @@ public class PluginController {
     @FXML private Button exportPhasorButton;
     @FXML private Button exportImageButton;
 
+
+
     @FXML
     private void initialize() {
+
+        //Imageview
+        intensityDisplay = new ImageDisplay(image_view);
 
 
         //Calibration section

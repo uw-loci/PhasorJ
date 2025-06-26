@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -17,8 +17,7 @@
 <?import org.phasorj.ui.controls.NumericSpinner?>
 <?import org.phasorj.ui.controls.NumericTextField?>
 
-
- <AnchorPane prefHeight="439.0" prefWidth="1097.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<AnchorPane prefHeight="439.0" prefWidth="1097.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.phasorj.ui.PluginController">
    <children>
       <VBox layoutX="14.0" layoutY="8.0" prefHeight="407.0" prefWidth="804.0">
          <children>
@@ -40,7 +39,7 @@
                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
                                              <children>
-                                                <Canvas fx:id="phasor_plot" height="365.0" width="384.0" />
+                                                <ImageView fx:id="image_view" fitHeight="256.0" fitWidth="256.0" layoutX="67.0" layoutY="62.0" pickOnBounds="true" preserveRatio="true" />
                                              </children>
                               </AnchorPane>
                               <AnchorPane>
@@ -48,7 +47,7 @@
                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
                                              <children>
-                                                <Canvas fx:id="image_view" height="365.0" width="384.0" />
+                                                <ImageView fx:id="phasor_plot" fitHeight="256.0" fitWidth="256.0" layoutX="80.0" layoutY="56.0" pickOnBounds="true" preserveRatio="true" />
                                              </children>
                               </AnchorPane>
                             </items>
@@ -118,12 +117,12 @@
                               <AnchorPane prefHeight="385.0" prefWidth="360.0">
                                  <children>
                                     <Text layoutX="16.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Calibration" />
-                                    <CheckBox layoutX="14.0" layoutY="35.0" mnemonicParsing="false" text="Manual" />
-                                    <CheckBox layoutX="18.0" layoutY="121.0" mnemonicParsing="false" text="Use Calibration File" />
-                                    <Button layoutX="38.0" layoutY="148.0" mnemonicParsing="false" text="Import File" />
-                                    <NumericTextField layoutX="150.0" layoutY="148.0" prefHeight="25.0" prefWidth="33.0" />
+                                    <CheckBox fx:id="manualCalibrationCheckbox" layoutX="14.0" layoutY="35.0" mnemonicParsing="false" text="Manual" />
+                                    <CheckBox fx:id="useCalibrationFileCheckbox" layoutX="18.0" layoutY="121.0" mnemonicParsing="false" text="Use Calibration File" />
+                                    <Button fx:id="importCalibrationFileButton" layoutX="38.0" layoutY="148.0" mnemonicParsing="false" text="Import File" />
+                                    <NumericTextField fx:id="calibrationTextField" layoutX="150.0" layoutY="148.0" prefHeight="25.0" prefWidth="33.0" />
                                     <Text layoutX="189.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ns" />
-                                    <TextArea layoutX="37.0" layoutY="180.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="175.0" text="filename&#10;" />
+                                    <TextArea fx:id="calibrationFileTextArea" layoutX="37.0" layoutY="180.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="175.0" text="filename&#10;" />
                                     <GridPane layoutX="35.0" layoutY="52.0" prefHeight="63.0" prefWidth="181.0" styleClass="tab-grid-pane">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
@@ -138,9 +137,9 @@
                                        </rowConstraints>
                                        <children>
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phase Shift" wrappingWidth="115.28515625" />
-                                          <NumericSpinner fx:id="iThreshSpinner1" editable="true" prefHeight="25.0" prefWidth="57.0" GridPane.columnIndex="1" />
+                                          <NumericSpinner fx:id="phase_shift" editable="true" prefHeight="25.0" prefWidth="57.0" GridPane.columnIndex="1" />
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modulation Factor" wrappingWidth="115.455078125" GridPane.rowIndex="1" />
-                                          <NumericSpinner fx:id="binSizeSpinner1" editable="true" prefHeight="0.0" prefWidth="54.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <NumericSpinner fx:id="modulation_factor" editable="true" prefHeight="0.0" prefWidth="54.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -164,8 +163,8 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="144.0" text="Export Phasor Plot" />
-                              <Button mnemonicParsing="false" prefHeight="23.0" prefWidth="177.0" text="Export Image" textAlignment="RIGHT" GridPane.columnIndex="1" />
+                              <Button fx:id="exportPhasorButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="144.0" text="Export Phasor Plot" />
+                              <Button fx:id="exportImageButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="177.0" text="Export Image" textAlignment="RIGHT" GridPane.columnIndex="1" />
                            </children>
                         </GridPane>
                      </content>
