@@ -112,12 +112,14 @@ public class PhasorJ extends Application {
         IterableInterval<T> iterable = Views.iterable(img);
         RandomAccessibleInterval<FloatType> data = ops.convert().float32(iterable);
         ij.ui().show(Views.hyperSlice(data, 2, 0));
-
-
-
+        
         Img<FloatType> summedIntensity = sumIntensity(data, 2);
         controller.loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
 
+    }
+
+    public static void main(String[] args) {
+        launch();
     }
 }
 
