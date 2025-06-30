@@ -20,8 +20,11 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
+import org.scijava.command.Command;
+import org.scijava.plugin.Plugin;
 import org.scijava.widget.FileWidget;
 
+@Plugin(type = Command.class, menuPath = "Analyze>Lifetime>PhasorJ")
 public class PhasorJ extends Application {
 
     //Adapted from  flimlib/flimj/ParamEstimator - calciMap
@@ -112,7 +115,7 @@ public class PhasorJ extends Application {
         IterableInterval<T> iterable = Views.iterable(img);
         RandomAccessibleInterval<FloatType> data = ops.convert().float32(iterable);
         ij.ui().show(Views.hyperSlice(data, 2, 0));
-        
+
         Img<FloatType> summedIntensity = sumIntensity(data, 2);
         controller.loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
 
