@@ -4,16 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e239c633-a952-4f07-a3ee-26c5a00279eb" name="Changes" comment="main function added again">
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_25_2025_2_44_PM_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="e239c633-a952-4f07-a3ee-26c5a00279eb" name="Changes" comment="update .gitignore">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/phasorj/ui/CalibrationLoader/AbstractCalibrationLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/phasorj/ui/ImageDisplay.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/phasorj/ui/ImageDisplay.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/phasorj/ui/PluginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/phasorj/ui/PluginController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -41,21 +47,25 @@
   "associatedIndex": 5
 }]]></component>
   <component name="ProjectId" id="2z6Secog0SiuIAmKV9aaSI8PLG0" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.PhasorJ.executor": "Debug",
+    "Application.PhasorJ.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Remote JVM Debug.fiji.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "last_opened_file_path": "C:/Users/hdoan3/code/PhasorJ-ui/PhasorJ"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.PhasorJ">
     <configuration name="PhasorJ" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.phasorj.ui.PhasorJ" />
       <module name="PhasorJ" />
@@ -64,6 +74,24 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="fiji" type="Remote">
+      <module name="PhasorJ" />
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <option name="AUTO_RESTART" value="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="5005" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.PhasorJ" />
+      <item itemvalue="Remote JVM Debug.fiji" />
+    </list>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -81,11 +109,55 @@
       <option name="project" value="LOCAL" />
       <updated>1751050509884</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="turn the program to a FIJI plugin">
+      <option name="closed" value="true" />
+      <created>1751316460448</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1751316460448</updated>
+    </task>
+    <task id="LOCAL-00003" summary="update .gitignore">
+      <option name="closed" value="true" />
+      <created>1751319587469</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1751319587469</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="main function added again" />
-    <option name="LAST_COMMIT_MESSAGE" value="main function added again" />
+    <MESSAGE value="turn the program to a FIJI plugin" />
+    <MESSAGE value="update .gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="update .gitignore" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/test/java/org/phasorj/ui/PhasorJ.java</url>
+          <line>123</line>
+          <properties class="org.phasorj.ui.PhasorJ" method="main">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -17,14 +17,18 @@ import javafx.scene.control.*;
 
 
 public class PluginController {
-    //Image View
+
+    /* *
+     * Display Image
+     */
+
     @FXML private ImageView phasor_plot;
     @FXML private ImageView image_view;
-
     /** The converter for the intensity (left) image */
     private static final RealLUTConverter<FloatType> INTENSITY_CONV =
             new RealLUTConverter<>(0, 0, ColorTables.GRAYS);
     private ImageDisplay intensityDisplay;
+
 
     /**
      * Annotates the intensity image and load to the on-screen Image.
@@ -57,6 +61,11 @@ public class PluginController {
     @FXML private TextArea calibrationFileTextArea;
     @FXML private Button importCalibrationFileButton;
 
+    @FXML
+    private void handleImportCalibrationFile(){
+
+    }
+
     //Export
     @FXML private Button exportPhasorButton;
     @FXML private Button exportImageButton;
@@ -66,23 +75,43 @@ public class PluginController {
     @FXML
     private void initialize() {
 
-        //Imageview
+       /* *
+        * Display Image
+        */
         intensityDisplay = new ImageDisplay(image_view);
 
+        /* *
+         * Calibration section
+         * */
 
-        //Calibration section
-
-        // Loading file area is disabled until the box is checked
+        // Set initial disabled state
         calibrationTextField.setDisable(true);
         calibrationFileTextArea.setDisable(true);
+        importCalibrationFileButton.setDisable(true);
 
-        manualCalibrationCheckbox.setOnAction(e ->
-                calibrationTextField.setDisable(!manualCalibrationCheckbox.isSelected()));
+        // Manual calibration selected
+        manualCalibrationCheckbox.setOnAction(e -> {
+            boolean isManual = manualCalibrationCheckbox.isSelected();
+            if (isManual) useCalibrationFileCheckbox.setSelected(false);
+            calibrationTextField.setDisable(!isManual);
+            calibrationFileTextArea.setDisable(true);
+            importCalibrationFileButton.setDisable(true);
+        });
 
-        useCalibrationFileCheckbox.setOnAction(e ->
-                calibrationFileTextArea.setDisable(!useCalibrationFileCheckbox.isSelected()));
+        // File calibration selected
+        useCalibrationFileCheckbox.setOnAction(e -> {
+            boolean isFileBased = useCalibrationFileCheckbox.isSelected();
+            if (isFileBased) manualCalibrationCheckbox.setSelected(false);
+            calibrationFileTextArea.setDisable(!isFileBased);
+            importCalibrationFileButton.setDisable(!isFileBased);
+            calibrationTextField.setDisable(true);
+        });
 
-        // Export section
+
+        /* *
+         *  Export section
+         * */
+
         exportPhasorButton.setOnAction(e -> {
             System.out.println("Exporting Phasor Plot:");
         });

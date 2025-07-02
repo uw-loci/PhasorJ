@@ -187,6 +187,8 @@ public class ImageDisplay
         return intensityMap;
     }
 
+
+
     public static <T extends RealType<T>> void processDataset(Dataset dataset, PluginController controller) {
         @SuppressWarnings("unchecked")
         ImgPlus<T> imp = (ImgPlus<T>) dataset.getImgPlus();
