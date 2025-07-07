@@ -1,23 +1,29 @@
 package org.phasorj.ui;
 
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import net.imagej.display.ColorTables;
-import net.imagej.ops.OpService;
+import net.imagej.display.DatasetView;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.RealLUTConverter;
+import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
+import org.phasorj.ui.CalibHelper.CalibImport;
 import org.phasorj.ui.controls.NumericSpinner;
 import org.phasorj.ui.controls.NumericTextField;
 
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import org.scijava.Context;
+
+import static org.phasorj.ui.ImageDisplay.processDataset;
 
 
 public class PluginController {
-
+    private Context ctx;
+    private DatasetView datasetView;
     /* *
      * Display Image
      */
@@ -28,6 +34,7 @@ public class PluginController {
     private static final RealLUTConverter<FloatType> INTENSITY_CONV =
             new RealLUTConverter<>(0, 0, ColorTables.GRAYS);
     private ImageDisplay intensityDisplay;
+
 
 
     /**
@@ -122,4 +129,18 @@ public class PluginController {
     }
 
 
+    public void loadCtx(Context ctx) {
+        this.ctx = ctx;
+    }
+
+    public void loadDatasetView(DatasetView datasetView) {
+        this.datasetView = datasetView;
+    }
+
+    public void displayOriginalImage() {
+        RandomAccessibleInterval<FloatType> originalImg = processDataset(datasetView.getData());
+        Img<FloatType> summedIntensity = ImageDisplay.sumIntensity(originalImg, 2);
+        loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
+
+    }
 }

@@ -5,17 +5,9 @@ import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import net.imagej.Dataset;
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
+
 import net.imagej.display.DatasetView;
-import net.imagej.ops.OpService;
-import net.imglib2.*;
-import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgs;
-import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.real.FloatType;
-import net.imglib2.view.Views;
+import org.scijava.Context;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -52,13 +44,20 @@ public class PhasorJCommand implements Command {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/phasorj/plugin-layout.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
+        PluginController controller = fxmlLoader.getController();
+        controller.loadDatasetView(datasetView);
+        Context ctx = datasetView.context();
+        controller.loadCtx(ctx);
+        controller.displayOriginalImage();
+
+
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("PhasorJ");
         stage.show();
 
-        PluginController controller = fxmlLoader.getController();
-        processDataset(datasetView.getData(), controller);
+
+
     }
 
     private void runAndWait(Runnable action) {

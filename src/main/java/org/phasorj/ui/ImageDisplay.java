@@ -189,7 +189,7 @@ public class ImageDisplay
 
 
 
-    public static <T extends RealType<T>> void processDataset(Dataset dataset, PluginController controller) {
+    public static <T extends RealType<T>> RandomAccessibleInterval<FloatType> processDataset(Dataset dataset) {
         @SuppressWarnings("unchecked")
         ImgPlus<T> imp = (ImgPlus<T>) dataset.getImgPlus();
 
@@ -218,10 +218,7 @@ public class ImageDisplay
         }
 
         IterableInterval<T> iterable = Views.iterable(img);
-        RandomAccessibleInterval<FloatType> data = ops.convert().float32(iterable);
-
-        Img<FloatType> summedIntensity = sumIntensity(data, 2);
-        controller.loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
+        return ops.convert().float32(iterable);
 
     }
 }
