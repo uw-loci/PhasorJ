@@ -63,15 +63,15 @@ public class PluginController {
 
     //Calibration
     @FXML private CheckBox manualCalibrationCheckbox;
-    @FXML private CheckBox useCalibrationFileCheckbox;
-    @FXML private NumericTextField calibrationTextField;
-    @FXML private TextArea calibrationFileTextArea;
-    @FXML private Button importCalibrationFileButton;
+    @FXML private NumericSpinner phase_shift;
+    @FXML private NumericSpinner modulation_factor;
+    @FXML private CheckBox calibCurveCheckbox;
+    @FXML private CheckBox calibImageCheckbox;
+    @FXML private Button importFileButton;
+    @FXML private NumericTextField calibLifetime;
+    @FXML private TextArea importedFilenameDisplay;
 
-    @FXML
-    private void handleImportCalibrationFile(){
 
-    }
 
     //Export
     @FXML private Button exportPhasorButton;
@@ -91,29 +91,28 @@ public class PluginController {
          * Calibration section
          * */
 
-        // Set initial disabled state
-        calibrationTextField.setDisable(true);
-        calibrationFileTextArea.setDisable(true);
-        importCalibrationFileButton.setDisable(true);
 
-        // Manual calibration selected
-        manualCalibrationCheckbox.setOnAction(e -> {
-            boolean isManual = manualCalibrationCheckbox.isSelected();
-            if (isManual) useCalibrationFileCheckbox.setSelected(false);
-            calibrationTextField.setDisable(!isManual);
-            calibrationFileTextArea.setDisable(true);
-            importCalibrationFileButton.setDisable(true);
+        //Set initial state
+        phase_shift.setDisable(true);
+        modulation_factor.setDisable(true);
+        importFileButton.setDisable(true);
+        calibLifetime.setDisable(true);
+        importedFilenameDisplay.setDisable(true);
+
+        calibImageCheckbox.setOnAction(e -> {
+            boolean isCalibImage = calibImageCheckbox.isSelected();
+            if (isCalibImage) {
+                manualCalibrationCheckbox.setSelected(false);
+                calibCurveCheckbox.setSelected(false);
+            };
+            importFileButton.setDisable(!isCalibImage);
+            calibLifetime.setDisable(!isCalibImage);
+            importedFilenameDisplay.setDisable(!isCalibImage);
         });
 
-        // File calibration selected
-        useCalibrationFileCheckbox.setOnAction(e -> {
-            boolean isFileBased = useCalibrationFileCheckbox.isSelected();
-            if (isFileBased) manualCalibrationCheckbox.setSelected(false);
-            calibrationFileTextArea.setDisable(!isFileBased);
-            importCalibrationFileButton.setDisable(!isFileBased);
-            calibrationTextField.setDisable(true);
+        importFileButton.setOnAction(e -> {
+            var calibFile = CalibImport.handleImportCalibrationFile((Stage) importFileButton.getScene().getWindow(), importedFilenameDisplay, ctx);
         });
-
 
         /* *
          *  Export section
