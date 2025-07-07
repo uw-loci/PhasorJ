@@ -24,8 +24,7 @@ package org.phasorj.ui;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.regex.Pattern;
-//import org.scijava.util.ColorRGB;
-//import net.imglib2.display.ColorTable8;
+
 
 /**
  * Utils
