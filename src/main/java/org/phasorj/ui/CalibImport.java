@@ -1,4 +1,4 @@
-package org.phasorj.ui.CalibHelper;
+package org.phasorj.ui;
 
 import io.scif.services.DatasetIOService;
 import javafx.scene.control.Alert;
