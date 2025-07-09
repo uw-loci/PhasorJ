@@ -2,15 +2,14 @@ package org.phasorj.ui;
 
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import net.imagej.Dataset;
 import net.imagej.display.ColorTables;
 import net.imagej.display.DatasetView;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.RealLUTConverter;
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
-import org.phasorj.ui.CalibHelper.CalibImport;
 import org.phasorj.ui.controls.NumericSpinner;
 import org.phasorj.ui.controls.NumericTextField;
 
@@ -24,6 +23,9 @@ import static org.phasorj.ui.ImageDisplay.processDataset;
 public class PluginController {
     private Context ctx;
     private DatasetView datasetView;
+    private DataClass d;
+    //initiate a dataclass
+
     /* *
      * Display Image
      */
@@ -82,6 +84,13 @@ public class PluginController {
     @FXML
     private void initialize() {
 
+        /**
+         * Set up a dataclass instance
+         */
+
+        d = new DataClass();
+        d.setOriginalDS(datasetView.getData());
+
        /* *
         * Display Image
         */
@@ -111,7 +120,10 @@ public class PluginController {
         });
 
         importFileButton.setOnAction(e -> {
-            var calibFile = CalibImport.handleImportCalibrationFile((Stage) importFileButton.getScene().getWindow(), importedFilenameDisplay, ctx);
+            Dataset calibDs = CalibImport.handleImportCalibrationFile((Stage) importFileButton.getScene().getWindow(),
+                                                                        importedFilenameDisplay,
+                                                                        ctx);
+            if (calibDs != null) d.setCalibImG(calibDs);
         });
 
         /* *
@@ -138,7 +150,9 @@ public class PluginController {
 
     public void displayOriginalImage() {
         RandomAccessibleInterval<FloatType> originalImg = processDataset(datasetView.getData());
-        Img<FloatType> summedIntensity = ImageDisplay.sumIntensity(originalImg, 2);
+        var summedIntensity = ImageDisplay.sumIntensity(originalImg, 2);
+
+        //no need to hyperslice
         loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
 
     }

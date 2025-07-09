@@ -13,14 +13,13 @@ import org.scijava.Context;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class CalibImport {
 
-    public static RandomAccessibleInterval<FloatType> handleImportCalibrationFile(Stage stage,
+    public static Dataset handleImportCalibrationFile(Stage stage,
                                                    TextArea filenameDisplay,
                                                    Context ctx) {
-        RandomAccessibleInterval<FloatType> calibImg = null;
+        Dataset calibDS = null;
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import Calibration File");
         fileChooser.getExtensionFilters().addAll(
@@ -32,15 +31,14 @@ public class CalibImport {
             filenameDisplay.setText(selectedFile.getName());
             try {
                 DatasetIOService dss = ctx.getService(DatasetIOService.class);
-                Dataset calibDS = dss.open(selectedFile.getAbsolutePath());
-                calibImg = (RandomAccessibleInterval<FloatType>) calibDS.getImgPlus().getImg();
+                calibDS = dss.open(selectedFile.getAbsolutePath());
             } catch (IOException ex) {
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 error.setContentText("Failed to import calibration file: " + ex.getMessage());
                 error.showAndWait();
             }
         }
-        return calibImg;
+        return calibDS;
     }
 
 }

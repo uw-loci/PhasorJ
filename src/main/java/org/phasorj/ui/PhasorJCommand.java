@@ -23,6 +23,8 @@ public class PhasorJCommand implements Command {
     @Parameter
     private DatasetView datasetView;
 
+
+
     @Override
     public void run() {
         // Force JavaFX runtime initialization
@@ -30,6 +32,8 @@ public class PhasorJCommand implements Command {
 
         // Keep JavaFX alive across calls
         Platform.setImplicitExit(false);
+
+
 
         runAndWait(() -> {
             try {
