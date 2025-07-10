@@ -1,5 +1,6 @@
 package org.phasorj.ui;
 
+import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import net.imagej.Dataset;
@@ -17,6 +18,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.scijava.Context;
 
+import java.io.IOException;
+
 import static org.phasorj.ui.ImageDisplay.processDataset;
 
 
@@ -30,7 +33,7 @@ public class PluginController {
      * Display Image
      */
 
-    @FXML private ImageView phasor_plot;
+    @FXML private Canvas phasorCanvas;
     @FXML private ImageView image_view;
     /** The converter for the intensity (left) image */
     private static final RealLUTConverter<FloatType> INTENSITY_CONV =
@@ -82,19 +85,24 @@ public class PluginController {
 
 
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
 
         /**
          * Set up a dataclass instance
          */
 
         d = new DataClass();
-        d.setOriginalDS(datasetView.getData());
+
 
        /* *
         * Display Image
         */
         intensityDisplay = new ImageDisplay(image_view);
+
+        /**
+         * Display phasor plot
+         */
+
 
         /* *
          * Calibration section
@@ -146,6 +154,7 @@ public class PluginController {
 
     public void loadDatasetView(DatasetView datasetView) {
         this.datasetView = datasetView;
+        d.setOriginalDS(datasetView.getData());
     }
 
     public void displayOriginalImage() {
@@ -155,5 +164,9 @@ public class PluginController {
         //no need to hyperslice
         loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
 
+    }
+
+    public void plotPhasor() throws IOException {
+        plotPhasor.plot(phasorCanvas, ctx);
     }
 }

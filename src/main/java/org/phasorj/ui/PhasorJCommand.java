@@ -53,6 +53,7 @@ public class PhasorJCommand implements Command {
         Context ctx = datasetView.context();
         controller.loadCtx(ctx);
         controller.displayOriginalImage();
+        controller.plotPhasor();
 
 
         Stage stage = new Stage();
