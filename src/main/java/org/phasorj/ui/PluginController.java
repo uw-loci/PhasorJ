@@ -1,7 +1,10 @@
 package org.phasorj.ui;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import net.imagej.Dataset;
 import net.imagej.display.ColorTables;
@@ -33,7 +36,8 @@ public class PluginController {
      * Display Image
      */
 
-    @FXML private Canvas phasorCanvas;
+    @FXML private AnchorPane plotPane;
+    ScatterChart<Number, Number> phasor_plot;
     @FXML private ImageView image_view;
     /** The converter for the intensity (left) image */
     private static final RealLUTConverter<FloatType> INTENSITY_CONV =
@@ -103,6 +107,25 @@ public class PluginController {
          * Display phasor plot
          */
 
+        NumberAxis xAxis = new NumberAxis(0, 1, 0.1);
+        xAxis.setLabel("G");
+        xAxis.setAutoRanging(false);
+
+        NumberAxis yAxis = new NumberAxis(0, 0.5, 0.1);
+        yAxis.setLabel("S");
+        yAxis.setAutoRanging(false);
+
+        phasor_plot = new ScatterChart<>(xAxis, yAxis);
+        phasor_plot.setTitle("Phasor Plot");
+
+        plotPane.getChildren().add(phasor_plot);
+
+        // Anchor it to all sides (fill the pane)
+        AnchorPane.setTopAnchor(phasor_plot, 0.0);
+        AnchorPane.setBottomAnchor(phasor_plot, 0.0);
+        AnchorPane.setLeftAnchor(phasor_plot, 0.0);
+        AnchorPane.setRightAnchor(phasor_plot, 0.0);
+
 
         /* *
          * Calibration section
@@ -167,6 +190,6 @@ public class PluginController {
     }
 
     public void plotPhasor() throws IOException {
-        plotPhasor.plot(phasorCanvas, ctx);
+        plotPhasor.plot(phasor_plot, ctx);
     }
 }

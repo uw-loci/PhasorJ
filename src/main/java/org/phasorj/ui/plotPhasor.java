@@ -3,6 +3,8 @@ package org.phasorj.ui;
 import io.scif.services.DatasetIOService;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import net.imagej.Dataset;
 import net.imagej.ops.OpService;
@@ -16,7 +18,7 @@ import java.io.IOException;
 
 public class plotPhasor {
 
-    public static void plot(Canvas canvas, Context ctx) throws IOException {
+    public static void plot(ScatterChart<Number, Number> chart, Context ctx) throws IOException {
         String filepath = "C:/Users/hdoan3/code/PhasorJ/src/phasor_components.tif";
 
         DatasetIOService datasetIOService = ctx.getService(DatasetIOService.class);
@@ -35,7 +37,7 @@ public class plotPhasor {
         float[] gData = convertToFloatArray(gImg);
         float[] sData = convertToFloatArray(sImg);
 
-        drawPhasor(canvas, gData, sData);
+        drawPhasor(chart, gData, sData);
     }
 
     private static float[] convertToFloatArray(RandomAccessibleInterval<FloatType> img) {
@@ -49,32 +51,17 @@ public class plotPhasor {
         return data;
     }
 
-    private static void drawPhasor(Canvas canvas, float[] gData, float[] sData) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    private static void drawPhasor(ScatterChart<Number, Number> chart, float[] gData, float[] sData) {
+        chart.getData().clear(); // clear old data
 
-        double width = canvas.getWidth();
-        double height = canvas.getHeight();
-
-        double margin = 20;
-        double radius = Math.min(width, height) / 2 - margin;
-        double centerX = width / 2;
-        double centerY = height / 2;
-
-        // Draw phasor circle boundary
-        gc.setStroke(Color.GRAY);
-        gc.strokeOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
-
-        // Plot points
-        gc.setFill(Color.BLUE);
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName("Phasor Points");
 
         int nPoints = Math.min(gData.length, sData.length);
-
         for (int i = 0; i < nPoints; i++) {
-            double x = centerX + gData[i] * radius;
-            double y = centerY - sData[i] * radius; // invert y-axis
-
-            gc.fillOval(x, y, 2, 2);
+            series.getData().add(new XYChart.Data<>(gData[i], sData[i]));
         }
+
+        chart.getData().add(series);
     }
 }
