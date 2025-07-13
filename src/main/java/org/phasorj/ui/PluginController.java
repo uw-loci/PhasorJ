@@ -1,10 +1,19 @@
 package org.phasorj.ui;
 
+import javafx.application.Platform;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import net.imagej.Dataset;
 import net.imagej.display.ColorTables;
@@ -22,6 +31,7 @@ import javafx.scene.control.*;
 import org.scijava.Context;
 
 import java.io.IOException;
+import java.util.Stack;
 
 import static org.phasorj.ui.ImageDisplay.processDataset;
 
@@ -118,13 +128,12 @@ public class PluginController {
         phasor_plot = new ScatterChart<>(xAxis, yAxis);
         phasor_plot.setTitle("Phasor Plot");
 
-        plotPane.getChildren().add(phasor_plot);
-
-        // Anchor it to all sides (fill the pane)
         AnchorPane.setTopAnchor(phasor_plot, 0.0);
         AnchorPane.setBottomAnchor(phasor_plot, 0.0);
         AnchorPane.setLeftAnchor(phasor_plot, 0.0);
         AnchorPane.setRightAnchor(phasor_plot, 0.0);
+
+        plotPane.getChildren().add(phasor_plot);
 
 
         /* *
@@ -190,6 +199,6 @@ public class PluginController {
     }
 
     public void plotPhasor() throws IOException {
-        plotPhasor.plot(phasor_plot, ctx);
+        plotPhasor.plot(phasor_plot, plotPane, ctx);
     }
 }
