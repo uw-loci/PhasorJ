@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import org.phasorj.ui.controls.NumericSpinner?>
@@ -42,10 +43,13 @@
                                                 <ImageView fx:id="image_view" fitHeight="256.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true" />
                                              </children>
                               </AnchorPane>
-                              <AnchorPane fx:id="plotPane" prefHeight="396.0" prefWidth="391.0">
+                              <AnchorPane prefHeight="396.0" prefWidth="391.0">
                                 <padding>
                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
+                                             <children>
+                                                <StackPane fx:id="plotPane" layoutX="95.0" layoutY="99.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
                               </AnchorPane>
                             </items>
                             <opaqueInsets>

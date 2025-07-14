@@ -1,19 +1,12 @@
 package org.phasorj.ui;
 
-import javafx.application.Platform;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import net.imagej.Dataset;
 import net.imagej.display.ColorTables;
@@ -46,8 +39,8 @@ public class PluginController {
      * Display Image
      */
 
-    @FXML private AnchorPane plotPane;
-    ScatterChart<Number, Number> phasor_plot;
+    @FXML private StackPane plotPane;
+    LineChart<Number, Number> phasor_plot;
     @FXML private ImageView image_view;
     /** The converter for the intensity (left) image */
     private static final RealLUTConverter<FloatType> INTENSITY_CONV =
@@ -120,13 +113,14 @@ public class PluginController {
         NumberAxis xAxis = new NumberAxis(0, 1, 0.1);
         xAxis.setLabel("G");
         xAxis.setAutoRanging(false);
+        xAxis.setOpacity(0.5);
 
-        NumberAxis yAxis = new NumberAxis(0, 0.5, 0.1);
+        NumberAxis yAxis = new NumberAxis(0, 0.6, 0.1);
         yAxis.setLabel("S");
         yAxis.setAutoRanging(false);
+        yAxis.setOpacity(0.5);
 
-        phasor_plot = new ScatterChart<>(xAxis, yAxis);
-        phasor_plot.setTitle("Phasor Plot");
+        phasor_plot = new LineChart<>(xAxis, yAxis);
 
         AnchorPane.setTopAnchor(phasor_plot, 0.0);
         AnchorPane.setBottomAnchor(phasor_plot, 0.0);
