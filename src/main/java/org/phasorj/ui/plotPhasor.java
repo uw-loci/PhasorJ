@@ -1,38 +1,20 @@
 package org.phasorj.ui;
 
 
+import javafx.scene.Node;
 import javafx.scene.chart.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.type.numeric.real.FloatType;
-import net.imglib2.view.Views;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import org.scijava.Context;
 import java.io.IOException;
-import java.util.Arrays;
 
 
 public class plotPhasor {
 
     public static void plot(StackPane plotPane, Context ctx) throws IOException {
-//        //getting mock data
-//        String filepath = "C:/Users/hdoan3/code/PhasorJ/src/phasor_components.tif";
-//
-//        DatasetIOService datasetIOService = ctx.getService(DatasetIOService.class);
-//        OpService ops = ctx.getService(OpService.class);
-//
-//        Dataset ds = datasetIOService.open(filepath);
-//        Img<FloatType> img = (Img<FloatType>) ds.getImgPlus();
-//
-//        int planeDim = 2;
-//
-//        RandomAccessibleInterval<FloatType> meanImg = Views.hyperSlice(img, planeDim, 0);
-//        RandomAccessibleInterval<FloatType> gImg = Views.hyperSlice(img, planeDim, 1);
-//        RandomAccessibleInterval<FloatType> sImg = Views.hyperSlice(img, planeDim, 2);
-//
-//        float[] meanData = convertToFloatArray(meanImg);
-//        float[] gData = convertToFloatArray(gImg);
-//        float[] sData = convertToFloatArray(sImg);
-
         //getting mock data
         float[][] gData = MockData.generateMockData(256, 256, 0, 1);
         float[][] sData = MockData.generateMockData(256, 256, (float) 0, 0.5F);
@@ -56,11 +38,36 @@ public class plotPhasor {
         phasor_plot.getData().add(getPhasorSeries(gData, sData));
 
 
-        //Ceating the uniCircle
+        //Creating the uniCircle
         LineChart<Number, Number> uniCircle = getLineChart(xAxis, yAxis);
         uniCircle.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
 
         plotPane.getChildren().addAll(phasor_plot, uniCircle);
+
+        Circle circleCrs = getCircleCrs(xAxis, yAxis);
+        circleCrs.setVisible(false);
+        plotPane.getChildren().add(circleCrs);
+        plotPane.setOnMouseClicked(mouseEvent -> {
+            circleCrs.setVisible(true);
+        });
+        circleCrs.setOnMouseDragged(event -> drag(event));
+        circleCrs.setOnScroll(event -> resize(event, circleCrs));
+    }
+
+    private static void resize(ScrollEvent event, Circle circle) {
+        double delta = event.getDeltaY();
+        double newRadius = circle.getRadius() + delta * 0.1;
+
+        // Clamp radius
+        newRadius = Math.max(5, Math.min(newRadius, 200));
+
+        circle.setRadius(newRadius);
+    }
+
+    private static void drag(MouseEvent event) {
+        Node n = (Node)event.getSource();
+        n.setTranslateX(n.getTranslateX() + event.getX());
+        n.setTranslateY(n.getTranslateY() + event.getY());
     }
 
     private static ScatterChart<Number, Number> getScatterChart(NumberAxis xAxis, NumberAxis yAxis) {
@@ -123,6 +130,8 @@ public class plotPhasor {
             float g = flattenG[i];
             float s = flattenS[i];
             if (g != 0 || s != 0) {
+                //this process is not optimized for large number of datapoints (thousands of datapoint)
+                //ok for now, but if we want to plot a huge dataset. (there's a addAll method?)
                 series.getData().add(new XYChart.Data<>(flattenG[i], flattenS[i]));
             }
         }
@@ -141,6 +150,20 @@ public class plotPhasor {
             series.getData().add(new XYChart.Data<>(x, y));
         }
         return  series;
+    }
+
+    private static Circle getCircleCrs(NumberAxis xAxis, NumberAxis yAxis){
+        Circle CrsCircle = new Circle(20);
+        CrsCircle.setFill(Color.TRANSPARENT);
+        CrsCircle.setStroke(Color.RED);
+        CrsCircle.setStrokeWidth(2);
+
+
+        double startX = xAxis.getDisplayPosition(0.5);
+        double startY = yAxis.getDisplayPosition(0.3);
+        CrsCircle.setTranslateX(startX);
+        CrsCircle.setTranslateY(startY);
+        return CrsCircle;
     }
 
 
