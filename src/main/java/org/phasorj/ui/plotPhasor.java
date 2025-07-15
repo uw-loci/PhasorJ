@@ -1,62 +1,44 @@
 package org.phasorj.ui;
 
-import io.scif.services.DatasetIOService;
-import javafx.application.Platform;
-
-import javafx.geometry.Bounds;
-
-import javafx.scene.Node;
-import javafx.scene.Parent;
 
 import javafx.scene.chart.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Circle;
-import net.imagej.Dataset;
-import net.imagej.ops.OpService;
-import net.imagej.ops.Ops;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.scijava.Context;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.Arrays;
 
 
 public class plotPhasor {
 
     public static void plot(StackPane plotPane, Context ctx) throws IOException {
+//        //getting mock data
+//        String filepath = "C:/Users/hdoan3/code/PhasorJ/src/phasor_components.tif";
+//
+//        DatasetIOService datasetIOService = ctx.getService(DatasetIOService.class);
+//        OpService ops = ctx.getService(OpService.class);
+//
+//        Dataset ds = datasetIOService.open(filepath);
+//        Img<FloatType> img = (Img<FloatType>) ds.getImgPlus();
+//
+//        int planeDim = 2;
+//
+//        RandomAccessibleInterval<FloatType> meanImg = Views.hyperSlice(img, planeDim, 0);
+//        RandomAccessibleInterval<FloatType> gImg = Views.hyperSlice(img, planeDim, 1);
+//        RandomAccessibleInterval<FloatType> sImg = Views.hyperSlice(img, planeDim, 2);
+//
+//        float[] meanData = convertToFloatArray(meanImg);
+//        float[] gData = convertToFloatArray(gImg);
+//        float[] sData = convertToFloatArray(sImg);
+
         //getting mock data
-        String filepath = "C:/Users/hdoan3/code/PhasorJ/src/phasor_components.tif";
-
-        DatasetIOService datasetIOService = ctx.getService(DatasetIOService.class);
-        OpService ops = ctx.getService(OpService.class);
-
-        Dataset ds = datasetIOService.open(filepath);
-        Img<FloatType> img = (Img<FloatType>) ds.getImgPlus();
-
-        int planeDim = 2;
-
-        RandomAccessibleInterval<FloatType> meanImg = Views.hyperSlice(img, planeDim, 0);
-        RandomAccessibleInterval<FloatType> gImg = Views.hyperSlice(img, planeDim, 1);
-        RandomAccessibleInterval<FloatType> sImg = Views.hyperSlice(img, planeDim, 2);
-
-        float[] meanData = convertToFloatArray(meanImg);
-        float[] gData = convertToFloatArray(gImg);
-        float[] sData = convertToFloatArray(sImg);
+        float[][] gData = MockData.generateMockData(256, 256, 0, 1);
+        float[][] sData = MockData.generateMockData(256, 256, (float) 0, 0.5F);
 
 
-        //
+        //Set up x and y axis
         NumberAxis xAxis = new NumberAxis(0, 1, 0.1);
         xAxis.setLabel("G");
         xAxis.setAutoRanging(false);
