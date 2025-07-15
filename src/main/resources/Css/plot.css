@@ -2,23 +2,24 @@
 -fx-background-color: transparent;
 }
 
-#PhasorPlot .default-color0.chart-series-line {
--fx-stroke-width: 0;
-}
 
-#PhasorPlot .default-color0.chart-line-symbol{
+#PhasorPlot .default-color0.chart-symbol{
     -fx-background-radius: 3;
     -fx-padding: 3;
-    -fx-background-color: red;
+    -fx-background-color: blue;
 }
 
-#PhasorPlot .default-color1.chart-series-line {
+#UniCircle .chart-plot-background {
+-fx-background-color: transparent;
+}
+
+#UniCircle .default-color0.chart-series-line {
     -fx-stroke: black;
     -fx-stroke-width: 1;
 
 }
 
-#PhasorPlot .default-color1.chart-line-symbol {
+#UniCircle .default-color0.chart-line-symbol {
     -fx-background-radius: 0;
     -fx-padding: 0;
     -fx-background-color: black;

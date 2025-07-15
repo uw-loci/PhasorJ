@@ -25,12 +25,18 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
+
 
 public class plotPhasor {
 
-    public static void plot(LineChart<Number, Number> chart, StackPane plotPane, Context ctx) throws IOException {
+    public static void plot(StackPane plotPane, Context ctx) throws IOException {
+        //getting mock data
         String filepath = "C:/Users/hdoan3/code/PhasorJ/src/phasor_components.tif";
 
         DatasetIOService datasetIOService = ctx.getService(DatasetIOService.class);
@@ -49,27 +55,55 @@ public class plotPhasor {
         float[] gData = convertToFloatArray(gImg);
         float[] sData = convertToFloatArray(sImg);
 
+
+        //
+        NumberAxis xAxis = new NumberAxis(0, 1, 0.1);
+        xAxis.setLabel("G");
+        xAxis.setAutoRanging(false);
+        xAxis.setOpacity(0.5);
+
+        NumberAxis yAxis = new NumberAxis(0, 0.6, 0.1);
+        yAxis.setLabel("S");
+        yAxis.setAutoRanging(false);
+        yAxis.setOpacity(0.5);
+
+        ScatterChart<Number, Number> phasor_plot = new ScatterChart<>(xAxis, yAxis);
         //format chart
-        chart.setId("PhasorPlot");
+        phasor_plot.setId("PhasorPlot");
 
-        chart.setLegendVisible(false);
-        chart.setHorizontalGridLinesVisible(false);
-        chart.setVerticalGridLinesVisible(false);
-        chart.setAlternativeColumnFillVisible(false);
-        chart.setAlternativeRowFillVisible(false);
-        chart.setHorizontalZeroLineVisible(false);
-        chart.setVerticalZeroLineVisible(false);
+        phasor_plot.setLegendVisible(false);
+        phasor_plot.setHorizontalGridLinesVisible(false);
+        phasor_plot.setVerticalGridLinesVisible(false);
+        phasor_plot.setAlternativeColumnFillVisible(false);
+        phasor_plot.setAlternativeRowFillVisible(false);
+        phasor_plot.setHorizontalZeroLineVisible(false);
+        phasor_plot.setVerticalZeroLineVisible(false);
+        phasor_plot.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
 
 
-        //Scatter chart
-        chart.getData().add(getPhasorSeries(gData, sData));
+//        float [][] gData = mockgData.getgData();
+//        float[][] sData = mocksData.getsData();
 
-        chart.getData().add(getCircle());
+        //Scatter phasor_plot
+        phasor_plot.getData().add(getPhasorSeries(gData, sData));
 
-        chart.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
 
+        //Ceating the uniCircle
+        LineChart<Number, Number> uniCircle = new LineChart<>(xAxis, yAxis);
+        uniCircle.setId("UniCircle");
+        uniCircle.getData().add(getCircle());
+        uniCircle.setLegendVisible(false);
+        uniCircle.setHorizontalGridLinesVisible(false);
+        uniCircle.setVerticalGridLinesVisible(false);
+        uniCircle.setAlternativeColumnFillVisible(false);
+        uniCircle.setAlternativeRowFillVisible(false);
+        uniCircle.setHorizontalZeroLineVisible(false);
+        uniCircle.setVerticalZeroLineVisible(false);
+
+        uniCircle.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
+
+        plotPane.getChildren().addAll(phasor_plot, uniCircle);
     }
-
     private static float[] convertToFloatArray(RandomAccessibleInterval<FloatType> img) {
         long size = img.size();
 
@@ -86,9 +120,11 @@ public class plotPhasor {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Phasor Points");
 
-        int nPoints = Math.min(gData.length, sData.length);
-        for (int i = 0; i < nPoints; i++) {
-            series.getData().add(new XYChart.Data<>(gData[i], sData[i]));
+
+        for (int i = 0; i < gData.length; i++) {
+            //for (int j = 0; j < gData[i].length; j++) {
+                series.getData().add(new XYChart.Data<>(gData[i], sData[i]));
+
         }
         return series;
     }

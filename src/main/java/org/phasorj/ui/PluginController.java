@@ -106,28 +106,7 @@ public class PluginController {
         */
         intensityDisplay = new ImageDisplay(image_view);
 
-        /**
-         * Display phasor plot
-         */
 
-        NumberAxis xAxis = new NumberAxis(0, 1, 0.1);
-        xAxis.setLabel("G");
-        xAxis.setAutoRanging(false);
-        xAxis.setOpacity(0.5);
-
-        NumberAxis yAxis = new NumberAxis(0, 0.6, 0.1);
-        yAxis.setLabel("S");
-        yAxis.setAutoRanging(false);
-        yAxis.setOpacity(0.5);
-
-        phasor_plot = new LineChart<>(xAxis, yAxis);
-
-        AnchorPane.setTopAnchor(phasor_plot, 0.0);
-        AnchorPane.setBottomAnchor(phasor_plot, 0.0);
-        AnchorPane.setLeftAnchor(phasor_plot, 0.0);
-        AnchorPane.setRightAnchor(phasor_plot, 0.0);
-
-        plotPane.getChildren().add(phasor_plot);
 
 
         /* *
@@ -193,6 +172,6 @@ public class PluginController {
     }
 
     public void plotPhasor() throws IOException {
-        plotPhasor.plot(phasor_plot, plotPane, ctx);
+        plotPhasor.plot(plotPane, ctx);
     }
 }
