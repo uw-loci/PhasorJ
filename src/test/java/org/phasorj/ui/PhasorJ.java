@@ -9,11 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.ScatterChart;
 import javafx.stage.Stage;
 
-import net.imagej.Dataset;
-import net.imagej.ImageJ;
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
-import net.imagej.ops.OpService;
 import net.imglib2.*;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;

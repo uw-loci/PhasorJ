@@ -49,6 +49,21 @@ public class plotPhasor {
         yAxis.setAutoRanging(false);
         yAxis.setOpacity(0.5);
 
+
+        //Create the phasorplot
+        ScatterChart<Number, Number> phasor_plot = getScatterChart(xAxis, yAxis);
+        phasor_plot.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
+        phasor_plot.getData().add(getPhasorSeries(gData, sData));
+
+
+        //Ceating the uniCircle
+        LineChart<Number, Number> uniCircle = getLineChart(xAxis, yAxis);
+        uniCircle.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
+
+        plotPane.getChildren().addAll(phasor_plot, uniCircle);
+    }
+
+    private static ScatterChart<Number, Number> getScatterChart(NumberAxis xAxis, NumberAxis yAxis) {
         ScatterChart<Number, Number> phasor_plot = new ScatterChart<>(xAxis, yAxis);
         //format chart
         phasor_plot.setId("PhasorPlot");
@@ -60,17 +75,10 @@ public class plotPhasor {
         phasor_plot.setAlternativeRowFillVisible(false);
         phasor_plot.setHorizontalZeroLineVisible(false);
         phasor_plot.setVerticalZeroLineVisible(false);
-        phasor_plot.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
+        return phasor_plot;
+    }
 
-
-//        float [][] gData = mockgData.getgData();
-//        float[][] sData = mocksData.getsData();
-
-        //Scatter phasor_plot
-        phasor_plot.getData().add(getPhasorSeries(gData, sData));
-
-
-        //Ceating the uniCircle
+    private static LineChart<Number, Number> getLineChart(NumberAxis xAxis, NumberAxis yAxis){
         LineChart<Number, Number> uniCircle = new LineChart<>(xAxis, yAxis);
         uniCircle.setId("UniCircle");
         uniCircle.getData().add(getCircle());
@@ -81,32 +89,42 @@ public class plotPhasor {
         uniCircle.setAlternativeRowFillVisible(false);
         uniCircle.setHorizontalZeroLineVisible(false);
         uniCircle.setVerticalZeroLineVisible(false);
-
-        uniCircle.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
-
-        plotPane.getChildren().addAll(phasor_plot, uniCircle);
+        return uniCircle;
     }
-    private static float[] convertToFloatArray(RandomAccessibleInterval<FloatType> img) {
-        long size = img.size();
+//    private static float[] convertToFloatArray(RandomAccessibleInterval<FloatType> img) {
+//        long size = img.size();
+//
+//        float[] data = new float[(int) size];
+//        int i = 0;
+//        for (FloatType val : Views.iterable(img)) {
+//            data[i++] = val.getRealFloat();
+//        }
+//        return data;
+//    }
 
-        float[] data = new float[(int) size];
-        int i = 0;
-        for (FloatType val : Views.iterable(img)) {
-            data[i++] = val.getRealFloat();
+    public static float[] flatten(float[][] array) {
+        int rows = array.length;
+        int cols = array[0].length;
+        float[] result = new float[rows * cols];
+        for (int i = 0; i < rows; i++) {
+            System.arraycopy(array[i], 0, result, i * cols, cols);
         }
-        return data;
+        return result;
     }
 
-    private static XYChart.Series<Number, Number> getPhasorSeries(float[] gData, float[] sData) {
+    private static XYChart.Series<Number, Number> getPhasorSeries(float[][] gData, float[][] sData) {
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        float[] flattenG = flatten(gData);
+        float[] flattenS = flatten(sData);
         series.setName("Phasor Points");
-
-
-        for (int i = 0; i < gData.length; i++) {
-            //for (int j = 0; j < gData[i].length; j++) {
-                series.getData().add(new XYChart.Data<>(gData[i], sData[i]));
-
+        int len = flattenS.length;
+        for (int i = 0; i < len; i++) {
+            float g = flattenG[i];
+            float s = flattenS[i];
+            if (g != 0 || s != 0) {
+                series.getData().add(new XYChart.Data<>(flattenG[i], flattenS[i]));
+            }
         }
         return series;
     }
