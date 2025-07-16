@@ -1,6 +1,7 @@
 package org.phasorj.ui;
 
 
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.input.MouseEvent;
@@ -8,13 +9,20 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.Img;
+import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.Views;
 import org.scijava.Context;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class plotPhasor {
 
-    public static void plot(StackPane plotPane, Context ctx) throws IOException {
+    public static void plot(StackPane plotPane, ImageDisplay imageDisplay,RandomAccessibleInterval<FloatType> intensity) throws IOException {
         //getting mock data
         float[][] gData = MockData.generateMockData(256, 256, 0, 1);
         float[][] sData = MockData.generateMockData(256, 256, (float) 0, 0.5F);
@@ -49,6 +57,7 @@ public class plotPhasor {
         plotPane.getChildren().add(circleCrs);
         plotPane.setOnMouseClicked(mouseEvent -> {
             circleCrs.setVisible(true);
+            highlightImage(circleCrs, getPointInsideCursors(circleCrs, phasor_plot), imageDisplay, intensity);
         });
         circleCrs.setOnMouseDragged(event -> drag(event));
         circleCrs.setOnScroll(event -> resize(event, circleCrs));
@@ -109,32 +118,39 @@ public class plotPhasor {
 //        return data;
 //    }
 
-    public static float[] flatten(float[][] array) {
-        int rows = array.length;
-        int cols = array[0].length;
-        float[] result = new float[rows * cols];
-        for (int i = 0; i < rows; i++) {
-            System.arraycopy(array[i], 0, result, i * cols, cols);
-        }
-        return result;
-    }
+//    public static float[] flatten(float[][] array) {
+//        int rows = array.length;
+//        int cols = array[0].length;
+//        float[] result = new float[rows * cols];
+//        for (int i = 0; i < rows; i++) {
+//            System.arraycopy(array[i], 0, result, i * cols, cols);
+//        }
+//        return result;
+//    }
 
     private static XYChart.Series<Number, Number> getPhasorSeries(float[][] gData, float[][] sData) {
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        float[] flattenG = flatten(gData);
-        float[] flattenS = flatten(sData);
         series.setName("Phasor Points");
-        int len = flattenS.length;
-        for (int i = 0; i < len; i++) {
-            float g = flattenG[i];
-            float s = flattenS[i];
+
+
+        List<XYChart.Data<Number, Number>> pointList = new ArrayList<>();
+
+        int row_num = gData.length;
+        int col_num = gData[0].length;
+        for (int i = 0; i < row_num; i++) {
+            for (int j = 0; j < col_num; j++){
+            float g = gData[i][j];
+            float s = sData[i][j];
             if (g != 0 || s != 0) {
-                //this process is not optimized for large number of datapoints (thousands of datapoint)
-                //ok for now, but if we want to plot a huge dataset. (there's a addAll method?)
-                series.getData().add(new XYChart.Data<>(flattenG[i], flattenS[i]));
+                XYChart.Data<Number, Number> point = new XYChart.Data<>(g, s);
+                point.setExtraValue(new int[]{i, j});
+                pointList.add(point);
+                }
             }
         }
+
+        series.getData().addAll(pointList);
         return series;
     }
 
@@ -166,5 +182,60 @@ public class plotPhasor {
         return CrsCircle;
     }
 
+    private static List<int[]> getPointInsideCursors(Circle cir, ScatterChart<Number, Number> phasorplot){
+        Bounds circleBounds = cir.localToScene(cir.getBoundsInLocal());
+
+        List<int[]> locations = new ArrayList<>();
+
+        System.out.println("points inside the circle:");
+        for (XYChart.Series<Number, Number> series : phasorplot.getData()){
+            for (XYChart.Data<Number, Number> data : series.getData()){
+                Node node = data.getNode();
+                Bounds pointBounds = node.localToScene(node.getBoundsInLocal());
+                double pointX = (pointBounds.getMinX() + pointBounds.getMaxX()) / 2;
+                double pointY = (pointBounds.getMinY() + pointBounds.getMaxY()) / 2;
+
+                double circleCenterX = (circleBounds.getMinX() + circleBounds.getMaxX()) / 2;
+                double circleCenterY = (circleBounds.getMinY() + circleBounds.getMaxY()) / 2;
+                double radius = cir.getRadius();
+
+
+                double dx = pointX - circleCenterX;
+                double dy = pointY - circleCenterY;
+                double sum_of_squared = dx*dx + dy * dy;
+
+                if (sum_of_squared <= radius * radius){
+                    int[] loc = (int[]) data.getExtraValue();
+                    locations.add(loc);
+                    System.out.printf("G: %.3f, S: %.3f%n", data.getXValue().doubleValue(), data.getYValue().doubleValue());
+                }
+
+            }
+        }
+        return locations;
+    }
+
+    private static void highlightImage(Circle circleCrs, List<int[]> coords, ImageDisplay imageDisplay, RandomAccessibleInterval<FloatType> intenistyImage){
+        Color strokeColor = (Color) circleCrs.getStroke();
+
+        int red = (int) (strokeColor.getRed() * 255);
+        int green = (int) (strokeColor.getGreen() * 255);
+        int blue = (int) (strokeColor.getBlue() * 255);
+        int alpha = (int) (strokeColor.getOpacity() * 255);
+        int highlightColor = ARGBType.rgba(red, green, blue, alpha);
+
+
+        imageDisplay.setImage(intenistyImage, ImageDisplay.INTENSITY_CONV, (srcRA, lutedRA) -> {
+            long x = srcRA.getLongPosition(0);
+            long y = srcRA.getLongPosition(1);
+
+            for (int[] coord : coords) {
+                if (coord[0] == y && coord[1] == x) {
+                    return new ARGBType(highlightColor);
+                }
+            }
+            return lutedRA.get(); // Use default color otherwise
+        });
+    }
 
 }

@@ -6,6 +6,7 @@ import javafx.scene.image.WritableImage;
 import net.imagej.Dataset;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
+import net.imagej.display.ColorTables;
 import net.imagej.ops.OpService;
 import net.imglib2.*;
 import net.imglib2.converter.Converters;
@@ -41,6 +42,8 @@ public class ImageDisplay
     private RandomAccessibleInterval<FloatType> rawImage;
     private RandomAccessibleInterval<ARGBType> coloredImage;
 
+    public static final RealLUTConverter<FloatType> INTENSITY_CONV =
+            new RealLUTConverter<>(0, 0, ColorTables.GRAYS);
 
     public ImageDisplay(ImageView view) {
         this.view = view;

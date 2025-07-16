@@ -14,6 +14,7 @@ import net.imagej.display.DatasetView;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.RealLUTConverter;
+import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.phasorj.ui.controls.NumericSpinner;
@@ -43,9 +44,8 @@ public class PluginController {
     LineChart<Number, Number> phasor_plot;
     @FXML private ImageView image_view;
     /** The converter for the intensity (left) image */
-    private static final RealLUTConverter<FloatType> INTENSITY_CONV =
-            new RealLUTConverter<>(0, 0, ColorTables.GRAYS);
     private ImageDisplay intensityDisplay;
+    private Img<FloatType> summedIntensity;
 
 
 
@@ -62,9 +62,9 @@ public class PluginController {
         for (FloatType val : itr) {
             max = Math.max(max, val.getRealDouble());
         }
-        INTENSITY_CONV.setMax(max);
+        ImageDisplay.INTENSITY_CONV.setMax(max);
 
-        intensityDisplay.setImage(intensity, INTENSITY_CONV,
+        intensityDisplay.setImage(intensity, ImageDisplay.INTENSITY_CONV,
                 (srcRA, lutedRA) -> lutedRA.get());
     }
 
@@ -164,14 +164,13 @@ public class PluginController {
 
     public void displayOriginalImage() {
         RandomAccessibleInterval<FloatType> originalImg = processDataset(datasetView.getData());
-        var summedIntensity = ImageDisplay.sumIntensity(originalImg, 2);
+        summedIntensity = ImageDisplay.sumIntensity(originalImg, 2);
 
-        //no need to hyperslice
         loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
 
     }
 
     public void plotPhasor() throws IOException {
-        plotPhasor.plot(plotPane, ctx);
+        plotPhasor.plot(plotPane, intensityDisplay, Views.hyperSlice(summedIntensity, 2, 0));
     }
 }
