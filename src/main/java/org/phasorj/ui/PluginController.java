@@ -34,39 +34,16 @@ public class PluginController {
     private Context ctx;
     private DatasetView datasetView;
     private DataClass d;
-    //initiate a dataclass
 
-    /* *
-     * Display Image
-     */
 
+
+    //Image Display
     @FXML private StackPane plotPane;
     LineChart<Number, Number> phasor_plot;
     @FXML private ImageView image_view;
-    /** The converter for the intensity (left) image */
+    /** The converter for the intensity image */
     private ImageDisplay intensityDisplay;
     private Img<FloatType> summedIntensity;
-
-
-
-    /**
-     * Annotates the intensity image and load to the on-screen Image.
-     *
-     * @param intensity the intensity data
-     */
-
-    public void loadAnotatedIntensityImage(final RandomAccessibleInterval<FloatType> intensity) {
-        IterableInterval<FloatType> itr = Views.iterable(intensity);
-
-        double max = Double.NEGATIVE_INFINITY;
-        for (FloatType val : itr) {
-            max = Math.max(max, val.getRealDouble());
-        }
-        ImageDisplay.INTENSITY_CONV.setMax(max);
-
-        intensityDisplay.setImage(intensity, ImageDisplay.INTENSITY_CONV,
-                (srcRA, lutedRA) -> lutedRA.get());
-    }
 
     //Parameters
     @FXML private NumericSpinner intensity_up;
@@ -91,28 +68,26 @@ public class PluginController {
 
 
 
+
+    /**
+     *  perform setup tasks after the FXML file has been loaded.
+     */
     @FXML
     private void initialize() throws IOException {
 
         /**
          * Set up a dataclass instance
          */
-
         d = new DataClass();
 
-
-       /* *
-        * Display Image
+       /**
+        * Image Display
         */
         intensityDisplay = new ImageDisplay(image_view);
 
-
-
-
-        /* *
+        /**
          * Calibration section
          * */
-
 
         //Set initial state
         phase_shift.setDisable(true);
@@ -139,7 +114,7 @@ public class PluginController {
             if (calibDs != null) d.setCalibImG(calibDs);
         });
 
-        /* *
+        /**
          *  Export section
          * */
 
@@ -152,7 +127,6 @@ public class PluginController {
         });
     }
 
-
     public void loadCtx(Context ctx) {
         this.ctx = ctx;
     }
@@ -162,14 +136,21 @@ public class PluginController {
         d.setOriginalDS(datasetView.getData());
     }
 
+    /**
+     * Sum the datasetView along the lifetime axis and load the image to the ImageView
+     * */
     public void displayOriginalImage() {
         RandomAccessibleInterval<FloatType> originalImg = processDataset(datasetView.getData());
         summedIntensity = ImageDisplay.sumIntensity(originalImg, 2);
 
-        loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
+        ImageDisplay.loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0), intensityDisplay);
 
     }
 
+    /**
+     * Start the phasor plot and cluster selection actvities
+     * @throws IOException
+     */
     public void plotPhasor() throws IOException {
         plotPhasor.plot(plotPane, intensityDisplay, Views.hyperSlice(summedIntensity, 2, 0));
     }

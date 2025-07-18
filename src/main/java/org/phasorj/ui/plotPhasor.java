@@ -10,22 +10,27 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.real.FloatType;
-import net.imglib2.view.Views;
-import org.scijava.Context;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class plotPhasor {
 
+    /**
+     *
+     * @param plotPane
+     * @param imageDisplay
+     * @param intensity
+     * @throws IOException
+     */
     public static void plot(StackPane plotPane, ImageDisplay imageDisplay,RandomAccessibleInterval<FloatType> intensity) throws IOException {
         //getting mock data
         float[][] gData = MockData.generateMockData(256, 256, 0, 1);
-        float[][] sData = MockData.generateMockData(256, 256, (float) 0, 0.5F);
+        float[][] sData = MockData.generateMockData(256, 256, 0, 0.5F);
 
 
         //Set up x and y axis
@@ -50,8 +55,12 @@ public class plotPhasor {
         LineChart<Number, Number> uniCircle = getLineChart(xAxis, yAxis);
         uniCircle.getStylesheets().addAll(plotPhasor.class.getResource("/Css/plot.css").toExternalForm());
 
+        //Add both the phasor plot and the universal circle to the pane
         plotPane.getChildren().addAll(phasor_plot, uniCircle);
 
+        //Create a circle to be a cluster selector on the same axis as the plots
+        //TODO: Make the cursor appear when the "Add Circle" button is clicked instead of automatically.
+        //TODO: Allow multiple circles to be added
         Circle circleCrs = getCircleCrs(xAxis, yAxis);
         circleCrs.setVisible(false);
         plotPane.getChildren().add(circleCrs);
@@ -59,26 +68,48 @@ public class plotPhasor {
             circleCrs.setVisible(true);
             highlightImage(circleCrs, getPointInsideCursors(circleCrs, phasor_plot), imageDisplay, intensity);
         });
-        circleCrs.setOnMouseDragged(event -> drag(event));
-        circleCrs.setOnScroll(event -> resize(event, circleCrs));
+        circleCrs.setOnMouseDragged(event -> {
+            drag(event);
+            highlightImage(circleCrs, getPointInsideCursors(circleCrs, phasor_plot), imageDisplay, intensity);
+        });
+        circleCrs.setOnScroll(event -> {
+            resize(event, circleCrs);
+            highlightImage(circleCrs, getPointInsideCursors(circleCrs, phasor_plot), imageDisplay, intensity);
+
+        });
     }
 
+    /**
+     *
+     * @param event
+     * @param circle
+     *
+     * TODO: the size number was pick randomly. Need to be changed after I work on the window/image resizing.
+     */
     private static void resize(ScrollEvent event, Circle circle) {
         double delta = event.getDeltaY();
         double newRadius = circle.getRadius() + delta * 0.1;
 
-        // Clamp radius
         newRadius = Math.max(5, Math.min(newRadius, 200));
-
         circle.setRadius(newRadius);
+
     }
 
+    /**
+     *
+     * @param event
+     */
     private static void drag(MouseEvent event) {
         Node n = (Node)event.getSource();
         n.setTranslateX(n.getTranslateX() + event.getX());
         n.setTranslateY(n.getTranslateY() + event.getY());
     }
 
+    /**
+     * @param xAxis
+     * @param yAxis
+     * @return the phasor plot
+     */
     private static ScatterChart<Number, Number> getScatterChart(NumberAxis xAxis, NumberAxis yAxis) {
         ScatterChart<Number, Number> phasor_plot = new ScatterChart<>(xAxis, yAxis);
         //format chart
@@ -94,6 +125,13 @@ public class plotPhasor {
         return phasor_plot;
     }
 
+
+    /**
+     *
+     * @param xAxis
+     * @param yAxis
+     * @return a linechart of the universal circle
+     */
     private static LineChart<Number, Number> getLineChart(NumberAxis xAxis, NumberAxis yAxis){
         LineChart<Number, Number> uniCircle = new LineChart<>(xAxis, yAxis);
         uniCircle.setId("UniCircle");
@@ -107,27 +145,13 @@ public class plotPhasor {
         uniCircle.setVerticalZeroLineVisible(false);
         return uniCircle;
     }
-//    private static float[] convertToFloatArray(RandomAccessibleInterval<FloatType> img) {
-//        long size = img.size();
-//
-//        float[] data = new float[(int) size];
-//        int i = 0;
-//        for (FloatType val : Views.iterable(img)) {
-//            data[i++] = val.getRealFloat();
-//        }
-//        return data;
-//    }
 
-//    public static float[] flatten(float[][] array) {
-//        int rows = array.length;
-//        int cols = array[0].length;
-//        float[] result = new float[rows * cols];
-//        for (int i = 0; i < rows; i++) {
-//            System.arraycopy(array[i], 0, result, i * cols, cols);
-//        }
-//        return result;
-//    }
-
+    /**
+     * @param gData
+     * @param sData
+     * @return a XYChart series of data points (g, s) based on gData and sData
+     * and record the spatial coordinate as ExtraValue
+     */
     private static XYChart.Series<Number, Number> getPhasorSeries(float[][] gData, float[][] sData) {
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
@@ -142,8 +166,11 @@ public class plotPhasor {
             for (int j = 0; j < col_num; j++){
             float g = gData[i][j];
             float s = sData[i][j];
+
+            //Points with both g and s equal to 0 are ignored.
             if (g != 0 || s != 0) {
                 XYChart.Data<Number, Number> point = new XYChart.Data<>(g, s);
+                //Recording the spatial coordinate of the value on the 2D image.
                 point.setExtraValue(new int[]{i, j});
                 pointList.add(point);
                 }
@@ -154,6 +181,10 @@ public class plotPhasor {
         return series;
     }
 
+    /**
+     *
+     * @return a series of 100 points on the universal circle centered at (0.5, 0)
+     */
     private static XYChart.Series<Number, Number> getCircle() {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         int numPoints = 100;
@@ -161,33 +192,43 @@ public class plotPhasor {
 
         for (int i = 0; i < (numPoints+1); i++) {
             double angle = Math.PI * i / numPoints;
-            double x = radius * Math.cos(angle) + 0.501;
+            double x = radius * Math.cos(angle) + 0.5;
             double y = radius * Math.sin(angle);
             series.getData().add(new XYChart.Data<>(x, y));
         }
         return  series;
     }
 
+    /**
+     * Create a circle with transparent at position (0, 0)
+     * @param xAxis
+     * @param yAxis
+     * @return
+     */
     private static Circle getCircleCrs(NumberAxis xAxis, NumberAxis yAxis){
         Circle CrsCircle = new Circle(20);
         CrsCircle.setFill(Color.TRANSPARENT);
         CrsCircle.setStroke(Color.RED);
         CrsCircle.setStrokeWidth(2);
-
-
-        double startX = xAxis.getDisplayPosition(0.5);
-        double startY = yAxis.getDisplayPosition(0.3);
+        
+        double startX = xAxis.getDisplayPosition(0.0);
+        double startY = yAxis.getDisplayPosition(0.0);
         CrsCircle.setTranslateX(startX);
         CrsCircle.setTranslateY(startY);
         return CrsCircle;
     }
 
+    /**
+     *
+     * @param cir
+     * @param phasorplot
+     * @return a list of [x,y] locations of pixels with (g, s) value inside the circle
+     */
     private static List<int[]> getPointInsideCursors(Circle cir, ScatterChart<Number, Number> phasorplot){
         Bounds circleBounds = cir.localToScene(cir.getBoundsInLocal());
 
         List<int[]> locations = new ArrayList<>();
 
-        System.out.println("points inside the circle:");
         for (XYChart.Series<Number, Number> series : phasorplot.getData()){
             for (XYChart.Data<Number, Number> data : series.getData()){
                 Node node = data.getNode();
@@ -204,10 +245,9 @@ public class plotPhasor {
                 double dy = pointY - circleCenterY;
                 double sum_of_squared = dx*dx + dy * dy;
 
-                if (sum_of_squared <= radius * radius){
+                if (sum_of_squared <= (radius * radius)){
                     int[] loc = (int[]) data.getExtraValue();
                     locations.add(loc);
-                    System.out.printf("G: %.3f, S: %.3f%n", data.getXValue().doubleValue(), data.getYValue().doubleValue());
                 }
 
             }
@@ -215,6 +255,15 @@ public class plotPhasor {
         return locations;
     }
 
+    /**
+     *
+     * @param circleCrs
+     * @param coords
+     * @param imageDisplay
+     * @param intenistyImage
+     *
+     * Displays an annotated intensity image with the pixel having (g, s) value inside the cursor circle highlighted in the cursor’s color.
+     */
     private static void highlightImage(Circle circleCrs, List<int[]> coords, ImageDisplay imageDisplay, RandomAccessibleInterval<FloatType> intenistyImage){
         Color strokeColor = (Color) circleCrs.getStroke();
 
@@ -224,7 +273,7 @@ public class plotPhasor {
         int alpha = (int) (strokeColor.getOpacity() * 255);
         int highlightColor = ARGBType.rgba(red, green, blue, alpha);
 
-
+        //TODO: We don't want to load the whole image everytime the cursor get updated. Might do overlaying instead.
         imageDisplay.setImage(intenistyImage, ImageDisplay.INTENSITY_CONV, (srcRA, lutedRA) -> {
             long x = srcRA.getLongPosition(0);
             long y = srcRA.getLongPosition(1);
@@ -234,7 +283,7 @@ public class plotPhasor {
                     return new ARGBType(highlightColor);
                 }
             }
-            return lutedRA.get(); // Use default color otherwise
+            return lutedRA.get();
         });
     }
 

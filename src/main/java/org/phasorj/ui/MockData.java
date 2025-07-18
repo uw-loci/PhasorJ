@@ -9,7 +9,7 @@ public class MockData {
         Random rand = new Random();
         float[][] array = new float[rows][cols];
         int totalCells = rows * cols;
-        int nonZeroCount = 1000;
+        int nonZeroCount = 10000;
         // Fill first `nonZeroCount` positions with non-zero values
         for (int index = 0; index < nonZeroCount; index++) {
             int i = index / cols;

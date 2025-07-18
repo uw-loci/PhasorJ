@@ -27,14 +27,9 @@ public class PhasorJCommand implements Command {
 
     @Override
     public void run() {
-        // Force JavaFX runtime initialization
+
         new JFXPanel();
-
-        // Keep JavaFX alive across calls
         Platform.setImplicitExit(false);
-
-
-
         runAndWait(() -> {
             try {
                 loadUI();
@@ -44,7 +39,10 @@ public class PhasorJCommand implements Command {
         });
     }
 
-    private void loadUI() throws IOException {
+    /***
+     * Load the FXML layout, call main functions in the controller, and show the Stage
+     */
+        private void loadUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/phasorj/plugin-layout.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
@@ -65,6 +63,20 @@ public class PhasorJCommand implements Command {
 
     }
 
+
+    /**
+     * Runs the specified {@link Runnable} on the
+     * JavaFX application thread and waits for completion.
+     * <p>
+     * Credit:
+     * <a href="https://news.kynosarges.org/2014/05/01/simulating-platform-runandwait/">Christoph Nahr</a>
+     * </p>
+     *
+     * @param action the {@link Runnable} to run
+     * @throws NullPointerException if {@code action} is {@code null}
+     *
+     * Adapted from FLIMJCommand
+     */
     private void runAndWait(Runnable action) {
         if (Platform.isFxApplicationThread()) {
             action.run();

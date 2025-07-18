@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * Utils
+ * Utils.. this file was copied FLIMJ-UI along to support some JavaFx components..not used for now but needed for the FXML to load
  */
 public class Utils {
 	/**

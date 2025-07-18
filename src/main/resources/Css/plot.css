@@ -4,8 +4,8 @@
 
 
 #PhasorPlot .default-color0.chart-symbol{
-    -fx-background-radius: 3;
-    -fx-padding: 3;
+    -fx-background-radius: 0.5;
+    -fx-padding: 0.5;
     -fx-background-color: blue;
 }
 

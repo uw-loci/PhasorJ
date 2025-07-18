@@ -16,6 +16,13 @@ import java.io.IOException;
 
 public class CalibImport {
 
+    /**
+     * @param stage
+     * @param filenameDisplay
+     * @param ctx
+     *  Open a new window with the filechooser
+     * @return the calibration image
+     */
     public static Dataset handleImportCalibrationFile(Stage stage,
                                                    TextArea filenameDisplay,
                                                    Context ctx) {

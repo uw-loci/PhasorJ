@@ -20,7 +20,13 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
 
-//Helper functions for image displays used in PluginController and PhasorJCommand
+/**
+ * Helper functions for image displays used in PluginController and PhasorJCommand
+ */
+
+//TODO (as of 07/17/25): Update the functions to support image resizing
+
+
 public class ImageDisplay
 {
     final private ImageView view;
@@ -51,7 +57,7 @@ public class ImageDisplay
 
 
     @FunctionalInterface
-    public static interface ImageAnnotator {
+    public interface ImageAnnotator {
 
         /**
          * Recolors the rendered pixel given a pointer to the source float value and the LUT
@@ -138,11 +144,8 @@ public class ImageDisplay
         Bounds parentBounds = view.getParent().getLayoutBounds();
         fitSize(parentBounds.getWidth() - 10, parentBounds.getHeight() - 10);
 
-        // At the end of your setImage() method:
 
-        if (writableImage == null || writableImage.getWidth() != imgW || writableImage.getHeight() != imgH) {
-            writableImage = new WritableImage(imgW, imgH);
-        }
+        writableImage = new WritableImage(imgW, imgH);
 
         // Copy pixels from ARGBScreenImage to WritableImage
         int[] pixels = interImage.getData(); // get pixel array
@@ -150,12 +153,19 @@ public class ImageDisplay
                 javafx.scene.image.PixelFormat.getIntArgbPreInstance(),
                 pixels, 0, imgW);
 
-        // Finally, set the WritableImage to the ImageView
         view.setImage(writableImage);
 
     }
 
-    //Adapted from  flimlib/flimj/ParamEstimator - calciMap
+
+
+    /**
+     * //Adapted from  flimlib/flimj/ParamEstimator - calciMap
+     *
+     * @param data
+     * @param lifetimeAxis
+     * @return
+     */
     public static   Img<FloatType> sumIntensity(RandomAccessibleInterval<FloatType> data, int lifetimeAxis) {
         // Get dimensions of input data
         int numDims = data.numDimensions();
@@ -191,7 +201,11 @@ public class ImageDisplay
     }
 
 
-
+    /**
+     * @param dataset
+     * Process the input Dataset and return a 3D RAI<FloatType>
+     *
+     */
     public static <T extends RealType<T>> RandomAccessibleInterval<FloatType> processDataset(Dataset dataset) {
         @SuppressWarnings("unchecked")
         ImgPlus<T> imp = (ImgPlus<T>) dataset.getImgPlus();
@@ -224,4 +238,23 @@ public class ImageDisplay
         return ops.convert().float32(iterable);
 
     }
+
+    /**
+     * Annotates the intensity image and load to the on-screen Image.
+     * @param intensity the intensity data
+     */
+
+    public static void loadAnotatedIntensityImage(final RandomAccessibleInterval<FloatType> intensity, ImageDisplay intensityDisplay) {
+        IterableInterval<FloatType> itr = Views.iterable(intensity);
+
+        double max = Double.NEGATIVE_INFINITY;
+        for (FloatType val : itr) {
+            max = Math.max(max, val.getRealDouble());
+        }
+        ImageDisplay.INTENSITY_CONV.setMax(max);
+
+        intensityDisplay.setImage(intensity, ImageDisplay.INTENSITY_CONV,
+                (srcRA, lutedRA) -> lutedRA.get());
+    }
+
 }
