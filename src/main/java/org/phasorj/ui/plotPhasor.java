@@ -210,7 +210,7 @@ public class plotPhasor {
         CrsCircle.setFill(Color.TRANSPARENT);
         CrsCircle.setStroke(Color.RED);
         CrsCircle.setStrokeWidth(2);
-        
+
         double startX = xAxis.getDisplayPosition(0.0);
         double startY = yAxis.getDisplayPosition(0.0);
         CrsCircle.setTranslateX(startX);

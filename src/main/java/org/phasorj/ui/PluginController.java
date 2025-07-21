@@ -119,11 +119,19 @@ public class PluginController {
          * */
 
         exportPhasorButton.setOnAction(e -> {
-            System.out.println("Exporting Phasor Plot:");
+            try {
+                Export.exportPane(plotPane, "phasorPlot");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         exportImageButton.setOnAction(e -> {
-            System.out.println("Exporting Image:");
+            try {
+                Export.exportImageView(image_view, "image");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
     }
 
