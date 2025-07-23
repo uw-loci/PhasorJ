@@ -1,4 +1,4 @@
-package org.phasorj.ui;
+package org.phasorj.ui.Helpers;
 
 
 import javafx.geometry.Bounds;
@@ -12,6 +12,8 @@ import javafx.scene.shape.Circle;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.real.FloatType;
+import org.phasorj.ui.MockData;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class plotPhasor {
      * @param intensity
      * @throws IOException
      */
-    public static void plot(StackPane plotPane, ImageDisplay imageDisplay,RandomAccessibleInterval<FloatType> intensity) throws IOException {
+    public static void plot(StackPane plotPane, ImageDisplay imageDisplay, RandomAccessibleInterval<FloatType> intensity) throws IOException {
         //getting mock data
         float[][] gData = MockData.generateMockData(256, 256, 0, 1);
         float[][] sData = MockData.generateMockData(256, 256, 0, 0.5F);

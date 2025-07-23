@@ -1,4 +1,4 @@
-package org.phasorj.ui;
+package org.phasorj.ui.Helpers;
 
 import javafx.geometry.Bounds;
 import javafx.scene.image.ImageView;
@@ -140,9 +140,9 @@ public class ImageDisplay
             }
 
         }
-        // resize with parent
-        Bounds parentBounds = view.getParent().getLayoutBounds();
-        fitSize(parentBounds.getWidth() - 10, parentBounds.getHeight() - 10);
+//        // resize with parent
+//        Bounds parentBounds = view.getParent().getLayoutBounds();
+//        fitSize(parentBounds.getWidth() - 10, parentBounds.getHeight() - 10);
 
 
         writableImage = new WritableImage(imgW, imgH);

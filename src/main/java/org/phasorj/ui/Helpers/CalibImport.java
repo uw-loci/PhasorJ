@@ -1,4 +1,4 @@
-package org.phasorj.ui;
+package org.phasorj.ui.Helpers;
 
 import io.scif.services.DatasetIOService;
 import javafx.scene.control.Alert;
@@ -6,8 +6,6 @@ import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.imagej.Dataset;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.type.numeric.real.FloatType;
 import org.scijava.Context;
 
 

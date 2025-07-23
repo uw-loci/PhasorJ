@@ -1,22 +1,19 @@
 package org.phasorj.ui;
 
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.imagej.Dataset;
-import net.imagej.display.ColorTables;
 import net.imagej.display.DatasetView;
-import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.converter.RealLUTConverter;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
+import org.phasorj.ui.Helpers.CalibImport;
+import org.phasorj.ui.Helpers.Export;
+import org.phasorj.ui.Helpers.ImageDisplay;
+import org.phasorj.ui.Helpers.plotPhasor;
 import org.phasorj.ui.controls.NumericSpinner;
 import org.phasorj.ui.controls.NumericTextField;
 
@@ -25,9 +22,8 @@ import javafx.scene.control.*;
 import org.scijava.Context;
 
 import java.io.IOException;
-import java.util.Stack;
 
-import static org.phasorj.ui.ImageDisplay.processDataset;
+import static org.phasorj.ui.Helpers.ImageDisplay.processDataset;
 
 
 public class PluginController {

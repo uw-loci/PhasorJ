@@ -15,8 +15,6 @@ import org.scijava.plugin.Plugin;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-import static org.phasorj.ui.ImageDisplay.processDataset;
-
 @Plugin(type = Command.class, menuPath = "Analyze>Lifetime>PhasorJ")
 public class PhasorJCommand implements Command {
 
