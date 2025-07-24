@@ -3,11 +3,11 @@
 }
 
 
-#PhasorPlot .default-color0.chart-symbol{
+#PhasorPlot .chart-symbol {
     -fx-background-radius: 0.5;
     -fx-padding: 0.5;
-    -fx-background-color: blue;
 }
+
 
 #UniCircle .chart-plot-background {
 -fx-background-color: transparent;

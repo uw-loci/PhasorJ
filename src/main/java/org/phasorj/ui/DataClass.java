@@ -3,24 +3,25 @@ package org.phasorj.ui;
 import net.imagej.Dataset;
 
 public class DataClass {
+    private final Dataset dataset;
+    private final float[][] gData;
+    private final float[][] sData;
 
-    private Dataset originalDS;
-    private Dataset calibImG;
-
-    public Dataset getOriginalDS() {
-        return originalDS;
+   public DataClass(Dataset dataset, float[][] gData, float[][] sData) {
+        this.dataset = dataset;
+        this.gData = gData;
+        this.sData = sData;
     }
 
-    public void setOriginalDS(Dataset ds) {
-        this.originalDS = ds;
+    public Dataset getDataset() {
+        return dataset;
     }
 
-    public Dataset getCalibImG() {
-        return calibImG;
+    public float[][] getGData() {
+        return gData;
     }
 
-    public void setCalibImG(Dataset ds) {
-        this.calibImG = ds;
+    public float[][] getSData() {
+        return sData;
     }
-
 }
