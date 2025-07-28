@@ -16,7 +16,7 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.controlsfx.control.CheckListView;
-import org.phasorj.ui.Helpers.CalibImport;
+import org.phasorj.ui.Helpers.Calibration;
 import org.phasorj.ui.Helpers.Export;
 import org.phasorj.ui.Helpers.ImageDisplay;
 import org.phasorj.ui.Helpers.PlotPhasor;
@@ -103,40 +103,13 @@ public class PluginController {
                     processor.addDS(newDS);
                     dsList.getItems().add(newDS.getName());
                     plt.updatePhasorPlot();
-                } catch (IOException ex) {
+                } catch (IOException | ExecutionException | InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         });
 
-        /**
-         * Calibration section
-         * */
 
-        //Set initial state
-        phase_shift.setDisable(true);
-        modulation_factor.setDisable(true);
-        importFileButton.setDisable(true);
-        calibLifetime.setDisable(true);
-        importedFilenameDisplay.setDisable(true);
-
-        calibImageCheckbox.setOnAction(e -> {
-            boolean isCalibImage = calibImageCheckbox.isSelected();
-            if (isCalibImage) {
-                manualCalibrationCheckbox.setSelected(false);
-                calibCurveCheckbox.setSelected(false);
-            };
-            importFileButton.setDisable(!isCalibImage);
-            calibLifetime.setDisable(!isCalibImage);
-            importedFilenameDisplay.setDisable(!isCalibImage);
-        });
-
-        importFileButton.setOnAction(e -> {
-            Dataset calibDs = CalibImport.handleImportCalibrationFile((Stage) importFileButton.getScene().getWindow(),
-                                                                        importedFilenameDisplay,
-                                                                        ctx);
-            if (calibDs != null) processor.setCalibImG(calibDs);
-        });
 
         /**
          *  Export section
@@ -194,5 +167,19 @@ public class PluginController {
             plt.setIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
             plt.updatePhasorPlot();
         }
+    }
+
+    public void calibration(){
+        Calibration.setup(ctx,
+                manualCalibrationCheckbox,
+                phase_shift,
+                modulation_factor,
+                calibCurveCheckbox,
+                calibImageCheckbox,
+                importFileButton,
+                calibLifetime,
+                importedFilenameDisplay,
+                frequency,
+                processor);
     }
 }

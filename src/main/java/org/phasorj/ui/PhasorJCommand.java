@@ -51,7 +51,7 @@ public class PhasorJCommand implements Command {
         controller.loadCtx(ctx);
         controller.displayOriginalImage();
         controller.plotPhasor();
-
+        controller.calibration();
 
         Stage stage = new Stage();
         stage.setScene(scene);

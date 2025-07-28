@@ -81,4 +81,11 @@ public class NumericTextField extends TextField {
 	public void setKwMap(HashMap<String, Double> kwMap) {
 		nh.setKwMap(kwMap);
 	}
+
+	/**
+	 * @param min the min to set
+	 */
+	public void setMin(double min) {
+        nh.setMin(min);
+	}
 }
