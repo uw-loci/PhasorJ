@@ -46,7 +46,6 @@ public class PlotPhasor {
 
 
     public void setupPlot(){
-
         //Set up x and y axis
         NumberAxis xAxis = new NumberAxis(0, 1, 0.1);
         xAxis.setLabel("G");
@@ -57,8 +56,6 @@ public class PlotPhasor {
         yAxis.setLabel("S");
         yAxis.setAutoRanging(false);
         yAxis.setOpacity(0.5);
-
-
 
         //Create the phasorplot
         phasorPlot = getScatterChart(xAxis, yAxis);
@@ -102,7 +99,6 @@ public class PlotPhasor {
     private void resize(ScrollEvent event, Circle circle) {
         double delta = event.getDeltaY();
         double newRadius = circle.getRadius() + delta * 0.1;
-
         newRadius = Math.max(5, Math.min(newRadius, 200));
         circle.setRadius(newRadius);
 
@@ -127,7 +123,6 @@ public class PlotPhasor {
         ScatterChart<Number, Number> phasor_plot = new ScatterChart<>(xAxis, yAxis);
         //format chart
         phasor_plot.setId("PhasorPlot");
-
         phasor_plot.setLegendVisible(false);
         phasor_plot.setHorizontalGridLinesVisible(false);
         phasor_plot.setVerticalGridLinesVisible(false);
@@ -137,7 +132,6 @@ public class PlotPhasor {
         phasor_plot.setVerticalZeroLineVisible(false);
         return phasor_plot;
     }
-
 
     /**
      *
@@ -169,8 +163,6 @@ public class PlotPhasor {
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Phasor Points");
-
-
         List<XYChart.Data<Number, Number>> pointList = new ArrayList<>();
 
         int row_num = gData.length;
@@ -189,7 +181,6 @@ public class PlotPhasor {
                 }
             }
         }
-
         series.getData().addAll(pointList);
         return series;
     }
@@ -232,7 +223,6 @@ public class PlotPhasor {
     }
 
     /**
-     *
      * @param cir
      * @param phasorplot
      * @return a list of [x,y] locations of pixels with (g, s) value inside the circle
@@ -253,23 +243,20 @@ public class PlotPhasor {
                 double circleCenterY = (circleBounds.getMinY() + circleBounds.getMaxY()) / 2;
                 double radius = cir.getRadius();
 
-
                 double dx = pointX - circleCenterX;
                 double dy = pointY - circleCenterY;
-                double sum_of_squared = dx*dx + dy * dy;
+                double sum_of_squared = dx * dx + dy * dy;
 
                 if (sum_of_squared <= (radius * radius)){
                     int[] loc = (int[]) data.getExtraValue();
                     locations.add(loc);
                 }
-
             }
         }
         return locations;
     }
 
     /**
-     *
      * @param circleCrs
      * @param coords
      * @param imageDisplay
@@ -302,14 +289,10 @@ public class PlotPhasor {
 
     public void updatePhasorPlot(){
         phasorPlot.getData().clear();
-
         for (DataClass data : processor.getEntries()) {
             float[][] gData = data.getGData();
             float[][] sData = data.getSData();
             phasorPlot.getData().add(getPhasorSeries(gData, sData));
         }
     }
-
-
-
 }

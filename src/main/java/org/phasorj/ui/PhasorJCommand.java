@@ -14,6 +14,7 @@ import org.scijava.plugin.Plugin;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 
 @Plugin(type = Command.class, menuPath = "Analyze>Lifetime>PhasorJ")
 public class PhasorJCommand implements Command {
@@ -31,7 +32,7 @@ public class PhasorJCommand implements Command {
         runAndWait(() -> {
             try {
                 loadUI();
-            } catch (IOException e) {
+            } catch (IOException | ExecutionException | InterruptedException e) {
                 throw new RuntimeException("Failed to load UI", e);
             }
         });
@@ -40,7 +41,7 @@ public class PhasorJCommand implements Command {
     /***
      * Load the FXML layout, call main functions in the controller, and show the Stage
      */
-        private void loadUI() throws IOException {
+        private void loadUI() throws IOException, ExecutionException, InterruptedException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/phasorj/plugin-layout.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 

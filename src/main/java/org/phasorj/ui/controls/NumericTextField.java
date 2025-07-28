@@ -36,8 +36,7 @@ public class NumericTextField extends TextField {
 
 	private NumericHelper nh;
 
-
-	/**
+    /**
 	 * Constructs an {@link NumericTextField}.
 	 * 
 	 * @param intOnly false if this spinner is allowed to consume doubles.

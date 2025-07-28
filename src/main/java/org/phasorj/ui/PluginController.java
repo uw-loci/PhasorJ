@@ -2,13 +2,13 @@ package org.phasorj.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import io.scif.services.DatasetIOService;
 import javafx.scene.chart.LineChart;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import net.imagej.Dataset;
 import net.imagej.display.DatasetView;
 import net.imglib2.RandomAccessibleInterval;
@@ -79,6 +79,8 @@ public class PluginController {
          * Set up a PhasorProcess and PlotPhasor instance
          */
         processor = new PhasorProcessor();
+
+
 
         /**
          * Image Display
@@ -161,7 +163,7 @@ public class PluginController {
         this.ctx = ctx;
     }
 
-    public void loadDatasetView(DatasetView datasetView) {
+    public void loadDatasetView(DatasetView datasetView) throws ExecutionException, InterruptedException {
         this.datasetView = datasetView;
         processor.addDS(datasetView.getData());
         dsList.getItems().add(datasetView.getData().getName());

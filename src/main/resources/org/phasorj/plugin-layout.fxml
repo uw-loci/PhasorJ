@@ -20,13 +20,13 @@
 <?import org.phasorj.ui.controls.NumericSpinner?>
 <?import org.phasorj.ui.controls.NumericTextField?>
 
-<AnchorPane prefHeight="482.0" prefWidth="1046.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.phasorj.ui.PluginController">
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.phasorj.ui.PluginController">
    <children>
-      <StackPane prefHeight="150.0" prefWidth="688.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <SplitPane dividerPositions="0.6963562753036437" prefHeight="482.0" prefWidth="1028.0">
+            <SplitPane dividerPositions="0.6963562753036437">
               <items>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="468.0" prefWidth="533.0" SplitPane.resizableWithParent="false">
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" SplitPane.resizableWithParent="false">
                     <items>
                       <TitledPane collapsible="false" text="Plotting Area">
                         <content>
@@ -50,7 +50,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                               </padding>
                                        <children>
-                                          <StackPane fx:id="plotPane" layoutX="33.0" layoutY="10.0" prefHeight="300.0" prefWidth="292.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0" />
+                                          <StackPane fx:id="plotPane" layoutX="50.0" layoutY="14.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                                           <Button layoutX="126.0" layoutY="273.0" mnemonicParsing="false" text="Add Cluster Selector" />
                                        </children>
                               </AnchorPane>
@@ -61,39 +61,37 @@
                     </SplitPane>
                         </content>
                       </TitledPane>
-                      <AnchorPane prefWidth="668.0" SplitPane.resizableWithParent="false">
+                      <AnchorPane prefWidth="668.0">
                            <children>
-                              <GridPane layoutX="205.0" layoutY="38.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane layoutX="88.0" layoutY="38.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="331.0" minWidth="10.0" prefWidth="328.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="332.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <CheckListView fx:id="dsList" prefHeight="142.0" prefWidth="405.0" />
+                                    <CheckListView fx:id="dsList" prefHeight="178.0" prefWidth="350.0" stylesheets="@../../Css/plot.css" GridPane.columnIndex="1" />
                                  </children>
                               </GridPane>
                            </children></AnchorPane>
                     </items>
                   </SplitPane>
-                  <SplitPane dividerPositions="0.29273504273504275, 0.5" orientation="VERTICAL" prefHeight="493.0" prefWidth="271.0">
+                  <SplitPane dividerPositions="0.31875, 0.8354166666666667" orientation="VERTICAL" prefHeight="516.0" prefWidth="290.0">
                     <items>
-                        <TitledPane collapsible="false" prefHeight="118.0" prefWidth="270.0" text="Parameters">
+                        <TitledPane collapsible="false" prefHeight="171.0" prefWidth="283.0" text="Parameters">
                         <content>
-                        <AnchorPane prefHeight="158.0" prefWidth="269.0">
+                        <AnchorPane>
                                  <children>
-                          <GridPane layoutX="9.0" layoutY="10.0" prefWidth="183.0" styleClass="tab-grid-pane" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="10.199999999999989">
+                          <GridPane layoutX="-5.0" layoutY="-54.0" styleClass="tab-grid-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <columnConstraints>
                               <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="128.8" minWidth="121.60001831054687" prefWidth="128.8" />
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="109.19998168945314" minWidth="102.0" prefWidth="102.0" />
                             </columnConstraints>
                             <rowConstraints>
                               <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                                          <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="54.0" minHeight="54.0" prefHeight="54.0" vgrow="SOMETIMES" />
                               <RowConstraints vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
@@ -103,8 +101,8 @@
                               <NumericSpinner fx:id="intensity_up" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Intensity Lower Limit" textAlignment="RIGHT" wrappingWidth="111.0550765991211" GridPane.rowIndex="1" />
                               <NumericSpinner fx:id="intensity_low" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Median Filter Size" textAlignment="RIGHT" wrappingWidth="95.82460021972656" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
-                                          <NumericSpinner fx:id="median_filter_size" editable="true" prefHeight="26.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Median Filter Size" textAlignment="RIGHT" wrappingWidth="95.82460021972656" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                                          <NumericSpinner fx:id="median_filter_size" editable="true" prefHeight="26.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                             </children>
                           </GridPane>
                                  </children>
@@ -133,23 +131,23 @@
                                              </rowConstraints>
                                              <children>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phase Shift" wrappingWidth="115.28515625" GridPane.rowIndex="1" />
-                                                <NumericSpinner fx:id="phase_shift" editable="true" prefHeight="25.0" prefWidth="168.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <NumericSpinner fx:id="phase_shift" disable="true" editable="true" prefHeight="25.0" prefWidth="168.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modulation Factor" wrappingWidth="115.455078125" GridPane.rowIndex="2" />
-                                                <NumericSpinner fx:id="modulation_factor" editable="true" prefHeight="28.0" prefWidth="128.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <NumericSpinner fx:id="modulation_factor" disable="true" editable="true" prefHeight="28.0" prefWidth="128.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <CheckBox fx:id="manualCalibrationCheckbox" mnemonicParsing="false" text="Manual" GridPane.halignment="LEFT" />
                                                 <CheckBox fx:id="calibCurveCheckbox" mnemonicParsing="false" prefHeight="17.0" prefWidth="113.0" text="Use Calib. Curve" GridPane.rowIndex="3" />
                                                 <CheckBox fx:id="calibImageCheckbox" mnemonicParsing="false" prefHeight="17.0" prefWidth="116.0" text="Use Calib. Image" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                <Button fx:id="importFileButton" mnemonicParsing="false" text="Import File" GridPane.rowIndex="4" />
-                                                <NumericTextField fx:id="calibLifetime" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Button fx:id="importFileButton" disable="true" mnemonicParsing="false" text="Import File" GridPane.rowIndex="4" />
+                                                <NumericTextField fx:id="calibLifetime" disable="true" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Frequency" GridPane.rowIndex="5" />
-                                                <NumericTextField fx:id="frequency" prefHeight="25.0" prefWidth="70.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <NumericTextField fx:id="frequency" disable="true" prefHeight="25.0" prefWidth="70.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Hz " textAlignment="JUSTIFY" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ns " GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                              </children>
                                           </GridPane>
                                        </children>
                                     </AnchorPane>
-                                    <TextArea fx:id="importedFilenameDisplay" prefHeight="38.0" prefWidth="263.0" text="Calibration filename&#10;" />
+                                    <TextArea fx:id="importedFilenameDisplay" disable="true" editable="false" prefHeight="38.0" prefWidth="263.0" text="Calibration filename&#10;" />
                             </children>
                           </VBox>
                         </content>
