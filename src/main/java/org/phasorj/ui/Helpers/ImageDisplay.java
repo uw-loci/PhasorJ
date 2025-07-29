@@ -1,7 +1,10 @@
 package org.phasorj.ui.Helpers;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import net.imagej.Dataset;
 import net.imagej.ImgPlus;
@@ -24,25 +27,25 @@ import net.imglib2.view.Views;
  * Helper functions for image displays used in PluginController and PhasorJCommand
  */
 
-//TODO (as of 07/17/25): Update the functions to support image resizing
-
 
 public class ImageDisplay
 {
     final private ImageView view;
 
+    /** Threshold of pixScale change that necessitates resampling */
+    private static final double RELOAD_THR = 1.5;
 
     //heigh and width of the source image
     private int imgW, imgH;
 
-    //the actual size on screen of a pixel from the source image
-    private double pixScale;
+    /** The actual size (in pixel) on screen of a pixel from the source image */
+    private double pixScale, lastReloadPixScale;
 
     //writeable image for JavaFX display
     private WritableImage writableImage;
 
     //The intermediate image between ImageJ and JavaFX
-    private ARGBScreenImage interImage;
+    private ARGBScreenImage screenImage;
 
     //raw image and LUT-colored images
     private RandomAccessibleInterval<FloatType> rawImage;
@@ -53,6 +56,11 @@ public class ImageDisplay
 
     public ImageDisplay(ImageView view) {
         this.view = view;
+        ChangeListener<Bounds> bChangeListener = (obs, oldVal, newVal) -> Platform.runLater(() -> {
+            fitSize(newVal.getWidth() - 10, newVal.getHeight() - 10);
+            reloadImageIfNecessary();
+        });
+        view.getParent().layoutBoundsProperty().addListener(bChangeListener);
     }
 
 
@@ -122,12 +130,12 @@ public class ImageDisplay
 
         // reallocate buffers
         if (oldW != imgW || oldH != imgH)
-            interImage = new ARGBScreenImage(imgW, imgH);
+            screenImage = new ARGBScreenImage(imgW, imgH);
 
         if (src != null && converter != null) {
             coloredImage = Converters.convert(src, converter, new ARGBType());
             // convert and annotate image
-            Cursor<ARGBType> dstCsr = interImage.localizingCursor();
+            Cursor<ARGBType> dstCsr = screenImage.localizingCursor();
             RandomAccess<ARGBType> lutedRA = coloredImage.randomAccess();
             RandomAccess<FloatType> valRA = src.randomAccess();
             while (dstCsr.hasNext()) {
@@ -140,21 +148,23 @@ public class ImageDisplay
             }
 
         }
-//        // resize with parent
-//        Bounds parentBounds = view.getParent().getLayoutBounds();
-//        fitSize(parentBounds.getWidth() - 10, parentBounds.getHeight() - 10);
-
-
-        writableImage = new WritableImage(imgW, imgH);
-
-        // Copy pixels from ARGBScreenImage to WritableImage
-        int[] pixels = interImage.getData(); // get pixel array
-        writableImage.getPixelWriter().setPixels(0, 0, imgW, imgH,
-                javafx.scene.image.PixelFormat.getIntArgbPreInstance(),
-                pixels, 0, imgW);
-
-        view.setImage(writableImage);
-
+            //resize with paren
+        Bounds parentBounds = view.getParent().getLayoutBounds();
+        fitSize(parentBounds.getWidth() - 10, parentBounds.getHeight() - 10);
+//
+//
+//        writableImage = new WritableImage(imgW, imgH);
+//
+//        // Copy pixels from ARGBScreenImage to WritableImage
+//        int[] pixels = screenImage.getData(); // get pixel array
+//        writableImage.getPixelWriter().setPixels(0, 0, imgW, imgH,
+//                javafx.scene.image.PixelFormat.getIntArgbPreInstance(),
+//                pixels, 0, imgW);
+//
+//        view.setImage(writableImage);
+        // force update as content may change
+        lastReloadPixScale = Double.MIN_VALUE;
+        reloadImageIfNecessary();
     }
 
 
@@ -166,7 +176,9 @@ public class ImageDisplay
      * @param lifetimeAxis
      * @return
      */
-    public static   Img<FloatType> sumIntensity(RandomAccessibleInterval<FloatType> data, int lifetimeAxis) {
+
+    //TODO: This is slow,try scijava ops sum function?
+    public static Img<FloatType> sumIntensity(RandomAccessibleInterval<FloatType> data, int lifetimeAxis) {
         // Get dimensions of input data
         int numDims = data.numDimensions();
         long[] dims = new long[numDims];
@@ -255,6 +267,36 @@ public class ImageDisplay
 
         intensityDisplay.setImage(intensity, ImageDisplay.INTENSITY_CONV,
                 (srcRA, lutedRA) -> lutedRA.get());
+    }
+
+    /**
+     * Reloads the image only if the ratio between {@link #pixScale} and {@link #lastReloadPixScale}
+     * or the inverse is no less than RELOAD_THR because small pixScale steps (e.g. during window
+     * resizing) marginally improves appearance.
+     */
+    private void reloadImageIfNecessary() {
+        if (screenImage == null || (Math.max(pixScale / lastReloadPixScale,
+                lastReloadPixScale / pixScale) < RELOAD_THR))
+            return;
+        lastReloadPixScale = pixScale;
+
+        writableImage = new WritableImage((int) view.getFitWidth(), (int) view.getFitHeight());
+        view.setImage(writableImage);
+
+        // manual nearest neighbor sampling
+        PixelWriter pw = writableImage.getPixelWriter();
+        RandomAccess<ARGBType> ra = screenImage.randomAccess();
+        long[] position = new long[2];
+        final double wiW = writableImage.getWidth();
+        final double wiH = writableImage.getHeight();
+        for (int x = 0; x < wiW; x++)
+            for (int y = 0; y < wiH; y++) {
+                position[0] = Math.min((int)(x * imgW / wiW), imgW - 1);
+                position[1] = Math.min((int)(y * imgH / wiH), imgH - 1);
+
+                ra.setPosition(position);
+                pw.setArgb(x, y, ra.get().get());
+            }
     }
 
 }

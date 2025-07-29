@@ -29,7 +29,6 @@ import org.scijava.Context;
 
 import static org.phasorj.ui.Helpers.ImageDisplay.processDataset;
 
-
 public class PluginController {
     private Context ctx;
     private DatasetView datasetView;
@@ -60,14 +59,10 @@ public class PluginController {
     @FXML private TextArea importedFilenameDisplay;
     @FXML private NumericTextField frequency;
 
-
-
     //Export
     @FXML private Button exportPhasorButton;
     @FXML private Button exportImageButton;
-
-
-
+    @FXML private TextField exportFolderPath;
 
     /**
      *  perform setup tasks after the FXML file has been loaded.
@@ -79,8 +74,6 @@ public class PluginController {
          * Set up a PhasorProcess and PlotPhasor instance
          */
         processor = new PhasorProcessor();
-
-
 
         /**
          * Image Display
@@ -108,7 +101,6 @@ public class PluginController {
                 }
             }
         });
-
 
 
         /**
