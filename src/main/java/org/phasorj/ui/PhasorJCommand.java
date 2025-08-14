@@ -53,6 +53,7 @@ public class PhasorJCommand implements Command {
         controller.plotPhasor();
         controller.calibration();
 
+        System.out.println("Got here");
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("PhasorJ");

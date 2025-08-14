@@ -1,13 +1,15 @@
 package org.phasorj.ui;
 
 import net.imagej.Dataset;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.real.FloatType;
 
 public class DataClass {
     private final Dataset dataset;
-    private final float[][] gData;
-    private final float[][] sData;
+    private final RandomAccessibleInterval<FloatType> gData;
+    private final RandomAccessibleInterval<FloatType> sData;
 
-   public DataClass(Dataset dataset, float[][] gData, float[][] sData) {
+   public DataClass(Dataset dataset, RandomAccessibleInterval<FloatType> gData, RandomAccessibleInterval<FloatType> sData) {
         this.dataset = dataset;
         this.gData = gData;
         this.sData = sData;
@@ -17,11 +19,11 @@ public class DataClass {
         return dataset;
     }
 
-    public float[][] getGData() {
+    public RandomAccessibleInterval<FloatType> getGData() {
         return gData;
     }
 
-    public float[][] getSData() {
+    public RandomAccessibleInterval<FloatType> getSData() {
         return sData;
     }
 }

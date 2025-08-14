@@ -79,7 +79,7 @@ public class PluginController {
          * Image Display
          */
         intensityDisplay = new ImageDisplay(image_view);
-        plt = new PlotPhasor(plotPane, intensityDisplay, null, processor);
+        plt = new PlotPhasor(plotPane, processor);
 
         /**
          * Adding Image
@@ -95,7 +95,7 @@ public class PluginController {
                     Dataset newDS = dss.open(newFLIMPath);
                     processor.addDS(newDS);
                     dsList.getItems().add(newDS.getName());
-                    plt.updatePhasorPlot();
+                  //  plt.updatePhasorPlot();
                 } catch (IOException | ExecutionException | InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -128,14 +128,14 @@ public class PluginController {
         this.ctx = ctx;
     }
 
-    public void loadDatasetView(DatasetView datasetView) throws ExecutionException, InterruptedException {
+    public void loadDatasetView(DatasetView datasetView) throws ExecutionException, InterruptedException, IOException {
         this.datasetView = datasetView;
         processor.addDS(datasetView.getData());
         dsList.getItems().add(datasetView.getData().getName());
 
-        if (plt != null) {
-            plt.updatePhasorPlot();
-        }
+//        if (plt != null) {
+//            plt.updatePhasorPlot();
+//        }
     }
 
     /**
@@ -155,10 +155,10 @@ public class PluginController {
      * @throws IOException
      */
     public void plotPhasor() {
-        if (plt != null && summedIntensity != null) {
-            plt.setIntensityImage(Views.hyperSlice(summedIntensity, 2, 0));
-            plt.updatePhasorPlot();
-        }
+//        if (plt != null && summedIntensity != null) {
+//            plt.setIntensityImage(Views.hyperSlice(summedIntensity, 2, 0))
+//            plt.updatePhasorPlot();
+//        }
     }
 
     public void calibration(){

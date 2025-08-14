@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Text?>
+<?import org.phasorj.ui.controls.NumericSpinner?>
+
+
+<TitledPane collapsible="false" prefHeight="118.0" prefWidth="270.0" text="Parameters" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.phasorj.ui.PluginController">
+<content>
+<AnchorPane prefHeight="158.0" prefWidth="269.0">
+         <children>
+  <GridPane layoutX="9.0" layoutY="10.0" prefWidth="183.0" styleClass="tab-grid-pane" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="10.199999999999989">
+    <columnConstraints>
+      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="128.8" minWidth="121.60001831054687" prefWidth="128.8" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="109.19998168945314" minWidth="102.0" prefWidth="102.0" />
+    </columnConstraints>
+    <rowConstraints>
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Intensity Upper Limit" textAlignment="RIGHT" wrappingWidth="112.48516082763672" />
+      <NumericSpinner fx:id="intensity_up" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Intensity Lower Limit" textAlignment="RIGHT" wrappingWidth="111.0550765991211" GridPane.rowIndex="1" />
+      <NumericSpinner fx:id="intensity_low" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Median Filter Size" textAlignment="RIGHT" wrappingWidth="95.82460021972656" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                  <NumericSpinner fx:id="median_filter_size" editable="true" prefHeight="26.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+    </children>
+  </GridPane>
+         </children>
+</AnchorPane>
+</content>
+</TitledPane>

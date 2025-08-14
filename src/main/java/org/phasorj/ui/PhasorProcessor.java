@@ -1,18 +1,17 @@
 package org.phasorj.ui;
 
+import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.Views;
 import org.scijava.Context;
-import org.scijava.script.DefaultScriptService;
-import org.scijava.script.ScriptModule;
-import org.scijava.script.ScriptService;
 
-import java.io.File;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class PhasorProcessor {
     private final List<DataClass> dataArr;
@@ -39,16 +38,9 @@ public class PhasorProcessor {
         calibLT = 0;
     }
 
-    public void addDS(Dataset ds) throws ExecutionException, InterruptedException {
-//        Context ctx = ds.getContext();
+    public void addDS(Dataset ds) throws ExecutionException, InterruptedException, IOException {
+        Context ctx = ds.getContext();
 //        scriptService  = ctx.service(DefaultScriptService.class);
-        long[] dims = new long[ds.numDimensions()];
-        ds.dimensions(dims);
-        int rows = (int) dims[1];
-        int cols = (int) dims[0];
-
-        float[][] gData = MockData.generateMockData(rows, cols, 0, 1);
-        float[][] sData = MockData.generateMockData(rows, cols, 0, 0.5f);
 
         //getting data using ScriptService
 //        Map<String,Object> args = new HashMap<>();
@@ -58,7 +50,30 @@ public class PhasorProcessor {
 //
 //        Dataset outputDS  = (Dataset) result.get().getOutput("output");
 //        System.out.println(outputDS.numDimensions());
-        dataArr.add(new DataClass(ds, gData, sData));
+//        long[] dims = new long[ds.numDimensions()];
+//        ds.dimensions(dims);
+//        int rows = (int) dims[1];
+//        int cols = (int) dims[0];
+//
+//        float[][] gData = MockData.generateMockData(rows, cols, 0, 1);
+//        float[][] sData = MockData.generateMockData(rows, cols, 0, 0.5f);
+
+        String filename = ds.getName();
+        filename = filename.substring(0, filename.length() - 4);
+        int lastUnderscoreIndex = filename.lastIndexOf('_');
+
+        String prefix = filename.substring(0, lastUnderscoreIndex);
+        String suffix = filename.substring(lastUnderscoreIndex + 1);
+
+        String gsFilename  = "C:\\Users\\hdoan3\\code\\PhasorJ\\src\\main\\resources\\Sample_data\\" + prefix + "_gs_" + suffix + "_cal" + ".tif";
+        Dataset gsDataset = ctx.service(DatasetIOService.class).open(gsFilename);
+
+        var img = gsDataset.getImgPlus();
+
+        var gData = Views.hyperSlice(img, 2, 1);
+        var sData = Views.hyperSlice(img, 2, 0);
+
+        dataArr.add(new DataClass(ds, (RandomAccessibleInterval<FloatType>) gData, (RandomAccessibleInterval<FloatType>) sData));
     }
 
     public double getFrequency() {
