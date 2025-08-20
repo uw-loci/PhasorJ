@@ -41,7 +41,7 @@ public class PluginController {
     private ImageDisplay intensityDisplay;
     private Img<FloatType> summedIntensity;
     @FXML private Button addImageButton;
-    @FXML private CheckListView<String> dsList;
+ //   @FXML private CheckListView<String> dsList;
 
     //Parameters
     @FXML private NumericSpinner intensity_up;
@@ -94,7 +94,7 @@ public class PluginController {
                 try {
                     Dataset newDS = dss.open(newFLIMPath);
                     processor.addDS(newDS);
-                    dsList.getItems().add(newDS.getName());
+                 //   dsList.getItems().add(newDS.getName());
                     plt.updatePhasorPlot();
                 } catch (IOException | ExecutionException | InterruptedException ex) {
                     throw new RuntimeException(ex);
@@ -128,10 +128,10 @@ public class PluginController {
         this.ctx = ctx;
     }
 
-    public void loadDatasetView(DatasetView datasetView) throws ExecutionException, InterruptedException {
+    public void loadDatasetView(DatasetView datasetView) throws ExecutionException, InterruptedException, IOException {
         this.datasetView = datasetView;
         processor.addDS(datasetView.getData());
-        dsList.getItems().add(datasetView.getData().getName());
+   //     dsList.getItems().add(datasetView.getData().getName());
 
         if (plt != null) {
             plt.updatePhasorPlot();
@@ -173,5 +173,6 @@ public class PluginController {
                 importedFilenameDisplay,
                 frequency,
                 processor);
+
     }
 }

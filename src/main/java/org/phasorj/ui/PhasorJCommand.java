@@ -22,11 +22,8 @@ public class PhasorJCommand implements Command {
     @Parameter
     private DatasetView datasetView;
 
-
-
     @Override
     public void run() {
-
         new JFXPanel();
         Platform.setImplicitExit(false);
         runAndWait(() -> {
@@ -57,9 +54,6 @@ public class PhasorJCommand implements Command {
         stage.setScene(scene);
         stage.setTitle("PhasorJ");
         stage.show();
-
-
-
     }
 
 

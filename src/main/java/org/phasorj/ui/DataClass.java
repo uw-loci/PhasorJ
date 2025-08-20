@@ -17,11 +17,19 @@ public class DataClass {
         return dataset;
     }
 
-    public float[][] getGData() {
+    public RandomAccessibleInterval<FloatType> getGData() {
         return gData;
     }
 
-    public float[][] getSData() {
+    public RandomAccessibleInterval<FloatType> getSData() {
         return sData;
+    }
+
+    public Dataset getRawPhasor() {
+        return rawPhasor;
+    }
+    public void updatePhasor(RandomAccessibleInterval<FloatType> g, RandomAccessibleInterval<FloatType> s) {
+        this.gData = g;
+        this.sData = s;
     }
 }

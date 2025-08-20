@@ -12,198 +12,173 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-<?import org.controlsfx.control.CheckListView?>
 <?import org.phasorj.ui.controls.NumericSpinner?>
 <?import org.phasorj.ui.controls.NumericTextField?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.phasorj.ui.PluginController">
-   <children>
-      <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <SplitPane dividerPositions="0.686350435624395">
-              <items>
-                  <SplitPane dividerPositions="0.6104166666666667" orientation="VERTICAL">
+    <children>
+        <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <SplitPane dividerPositions="0.686350435624395, 0.5">
                     <items>
-                      <TitledPane collapsible="false" prefHeight="290.0" prefWidth="571.0" text="Plotting Area">
-                        <content>
-                    <SplitPane dividerPositions="0.3611111111111111" style="-fx-background-insets: 0, 0; -fx-padding: -1;">
-                      <items>
-                        <AnchorPane prefHeight="308.0" prefWidth="230.0">
-                          <padding>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                          </padding>
-                                       <children>
-                                          <GridPane layoutX="75.0" layoutY="96.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <TitledPane collapsible="false" prefHeight="555.0" prefWidth="638.0" text="Plotting Area">
+                              <content>
+                                  <!-- IMPROVED: Changed to a single SplitPane with better ratio control -->
+                                  <SplitPane dividerPositions="0.45" style="-fx-background-insets: 0, 0; -fx-padding: -1;">
+                                      <items>
+                                          <!-- Left side: Image section -->
+                                          <AnchorPane prefHeight="308.0" prefWidth="230.0">
+                                              <padding>
+                                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                              </padding>
+                                              <children>
+                                                  <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <children>
+                                                          <!-- Image display -->
+                                                          <AnchorPane VBox.vgrow="ALWAYS">
+                                                              <children>
+                                                                  <ImageView fx:id="image_view" fitHeight="256.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                      <viewport>
+                                                                          <Rectangle2D />
+                                                                      </viewport>
+                                                                  </ImageView>
+                                                              </children>
+                                                          </AnchorPane>
+                                                          <!-- Buttons below image -->
+                                                          <VBox prefHeight="60.0" spacing="5.0">
+                                                              <children>
+                                                                  <Button fx:id="addImageButton" maxWidth="Infinity" mnemonicParsing="false" text="Add FLIM Image" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+                                                                  <Button fx:id="addImageButton1" maxWidth="Infinity" mnemonicParsing="false" text="Add Cluster Selector" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+                                                              </children>
+                                                          </VBox>
+                                                      </children>
+                                                  </VBox>
+                                              </children>
+                                          </AnchorPane>
+
+                                                <!-- Right side: Plot section -->
+                                          <AnchorPane prefHeight="266.0" prefWidth="255.0">
+                                              <padding>
+                                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                              </padding>
+                                              <children>
+                                                  <!-- IMPROVED: Plot gets full space with aspect ratio preserved -->
+                                                  <StackPane fx:id="plotPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <!-- Plot will be added here programmatically -->
+                                                        </StackPane>
+                                              </children>
+                                          </AnchorPane>
+                                      </items>
+                                      <opaqueInsets>
+                                          <Insets />
+                                      </opaqueInsets>
+                                  </SplitPane>
+                              </content>
+                          </TitledPane>
+                          <AnchorPane />
+                        <SplitPane dividerPositions="0.31875, 0.8354166666666667" orientation="VERTICAL">
+                            <items>
+                                <TitledPane collapsible="false" prefHeight="174.0" prefWidth="320.0" text="Parameters">
+                                    <content>
+                                        <AnchorPane>
+                                            <children>
+                                                <GridPane layoutX="-5.0" layoutY="-54.0" styleClass="tab-grid-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="128.8" minWidth="121.60001831054687" prefWidth="128.8" />
+                                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="109.19998168945314" minWidth="102.0" prefWidth="102.0" />
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints vgrow="SOMETIMES" />
+                                                        <RowConstraints maxHeight="54.0" minHeight="54.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints vgrow="SOMETIMES" />
+                                                        <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Intensity Upper Limit" textAlignment="RIGHT" wrappingWidth="112.48516082763672" />
+                                                        <NumericSpinner fx:id="intensity_up" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Intensity Lower Limit" textAlignment="RIGHT" wrappingWidth="111.0550765991211" GridPane.rowIndex="1" />
+                                                        <NumericSpinner fx:id="intensity_low" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Median Filter Size" textAlignment="RIGHT" wrappingWidth="95.82460021972656" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                                                        <NumericSpinner fx:id="median_filter_size" editable="true" prefHeight="26.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                    </children>
+                                                </GridPane>
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane collapsible="false" text="Calibration">
+                                    <content>
+                                        <VBox prefHeight="55.0" prefWidth="276.0" styleClass="flim-tab-vbox">
+                                            <children>
+                                                <AnchorPane>
+                                                    <children>
+                                                        <GridPane layoutX="13.0" layoutY="2.0" prefHeight="157.0" prefWidth="236.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css">
+                                                            <columnConstraints>
+                                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" prefWidth="120.0" />
+                                                            </columnConstraints>
+                                                            <rowConstraints>
+                                                                <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="58.0" minHeight="6.0" prefHeight="17.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="126.0" minHeight="14.0" prefHeight="17.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="119.0" minHeight="0.0" prefHeight="18.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="104.0" minHeight="0.0" prefHeight="18.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="104.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                                                            </rowConstraints>
+                                                            <children>
+                                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phase Shift" wrappingWidth="115.28515625" GridPane.rowIndex="1" />
+                                                                <NumericSpinner fx:id="phase_shift" disable="true" editable="true" prefHeight="25.0" prefWidth="168.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modulation Factor" wrappingWidth="115.455078125" GridPane.rowIndex="2" />
+                                                                <NumericSpinner fx:id="modulation_factor" disable="true" editable="true" prefHeight="28.0" prefWidth="128.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                                <CheckBox fx:id="manualCalibrationCheckbox" mnemonicParsing="false" text="Manual" GridPane.halignment="LEFT" />
+                                                                <CheckBox fx:id="calibCurveCheckbox" mnemonicParsing="false" prefHeight="17.0" prefWidth="113.0" text="Use Calib. Curve" GridPane.rowIndex="3" />
+                                                                <CheckBox fx:id="calibImageCheckbox" mnemonicParsing="false" prefHeight="17.0" prefWidth="116.0" text="Use Calib. Image" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                                <Button fx:id="importFileButton" disable="true" mnemonicParsing="false" text="Import File" GridPane.rowIndex="4" />
+                                                                <NumericTextField fx:id="calibLifetime" disable="true" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Frequency" GridPane.rowIndex="5" />
+                                                                <NumericTextField fx:id="frequency" disable="true" prefHeight="25.0" prefWidth="70.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Hz " textAlignment="JUSTIFY" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ns " GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                            </children>
+                                                        </GridPane>
+                                                    </children>
+                                                </AnchorPane>
+                                                <TextArea fx:id="importedFilenameDisplay" disable="true" editable="false" prefHeight="6.0" prefWidth="268.0" text="Calibration filename&#10;" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane collapsible="false" text="Export">
+                                    <content>
+                                        <GridPane prefHeight="92.0" prefWidth="285.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css">
                                             <columnConstraints>
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="138.20001220703125" minWidth="119.0" prefWidth="119.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="123.0" minWidth="10.0" prefWidth="123.0" />
                                             </columnConstraints>
                                             <rowConstraints>
-                                              <RowConstraints />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
-                                             <children>
-                                                <ImageView fx:id="image_view" fitHeight="256.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                                   <viewport>
-                                                      <Rectangle2D />
-                                                   </viewport>
-                                                </ImageView>
-                                             </children>
-                                          </GridPane>
-                                       </children>
-                        </AnchorPane>
-                              <AnchorPane prefHeight="266.0" prefWidth="255.0">
-                              <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                              </padding>
-                                       <children>
-                                          <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <children>
-                                                <GridPane>
-                                                  <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                  </columnConstraints>
-                                                  <rowConstraints>
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                  </rowConstraints>
-                                                   <children>
-                                                      <Button fx:id="addImageButton" mnemonicParsing="false" text="Add FLIM Image" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
-                                                      <Button fx:id="addImageButton1" mnemonicParsing="false" text="Add Cluster Selector" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" GridPane.rowIndex="1" />
-                                                   </children>
-                                                </GridPane>
-                                                <StackPane fx:id="plotPane" prefHeight="256.0" prefWidth="298.0" />
-                                             </children>
-                                          </HBox>
-                                       </children>
-                              </AnchorPane>
-                      </items>
-                      <opaqueInsets>
-                        <Insets />
-                      </opaqueInsets>
-                    </SplitPane>
-                        </content>
-                      </TitledPane>
-                      <AnchorPane>
-                           <children>
-                              <GridPane layoutX="88.0" layoutY="38.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="401.0" minWidth="10.0" prefWidth="340.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="320.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <CheckListView fx:id="dsList" stylesheets="@../../Css/plot.css" GridPane.columnIndex="1" />
-                                 </children>
-                              </GridPane>
-                           </children>
-                        </AnchorPane>
+                                            <children>
+                                                <Button fx:id="exportPhasorButton" mnemonicParsing="false" text="Export Phasor Plot" />
+                                                <Button fx:id="exportImageButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="177.0" text="Export Image" textAlignment="RIGHT" GridPane.columnIndex="1" />
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Folder Path" GridPane.rowIndex="1" />
+                                                <TextField fx:id="exportFolderPath" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </TitledPane>
+                            </items>
+                        </SplitPane>
                     </items>
-                  </SplitPane>
-                  <SplitPane dividerPositions="0.31875, 0.8354166666666667" orientation="VERTICAL">
-                    <items>
-                        <TitledPane collapsible="false" prefHeight="174.0" prefWidth="320.0" text="Parameters">
-                        <content>
-                        <AnchorPane>
-                                 <children>
-                          <GridPane layoutX="-5.0" layoutY="-54.0" styleClass="tab-grid-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <columnConstraints>
-                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="128.8" minWidth="121.60001831054687" prefWidth="128.8" />
-                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="109.19998168945314" minWidth="102.0" prefWidth="102.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="54.0" minHeight="54.0" prefHeight="54.0" vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Intensity Upper Limit" textAlignment="RIGHT" wrappingWidth="112.48516082763672" />
-                              <NumericSpinner fx:id="intensity_up" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Intensity Lower Limit" textAlignment="RIGHT" wrappingWidth="111.0550765991211" GridPane.rowIndex="1" />
-                              <NumericSpinner fx:id="intensity_low" editable="true" prefHeight="26.0" prefWidth="101.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Median Filter Size" textAlignment="RIGHT" wrappingWidth="95.82460021972656" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-                                          <NumericSpinner fx:id="median_filter_size" editable="true" prefHeight="26.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                            </children>
-                          </GridPane>
-                                 </children>
-                        </AnchorPane>
-                        </content>
-                        </TitledPane>
-                        <TitledPane collapsible="false" text="Calibration">
-                        <content>
-                          <VBox prefHeight="55.0" prefWidth="276.0" styleClass="flim-tab-vbox">
-                            <children>
-                                    <AnchorPane>
-                                       <children>
-                                          <GridPane layoutX="13.0" layoutY="2.0" prefHeight="157.0" prefWidth="236.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css">
-                                             <columnConstraints>
-                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
-                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" prefWidth="120.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="16.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="58.0" minHeight="6.0" prefHeight="17.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="126.0" minHeight="14.0" prefHeight="17.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="119.0" minHeight="0.0" prefHeight="18.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="104.0" minHeight="0.0" prefHeight="18.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="104.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phase Shift" wrappingWidth="115.28515625" GridPane.rowIndex="1" />
-                                                <NumericSpinner fx:id="phase_shift" disable="true" editable="true" prefHeight="25.0" prefWidth="168.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modulation Factor" wrappingWidth="115.455078125" GridPane.rowIndex="2" />
-                                                <NumericSpinner fx:id="modulation_factor" disable="true" editable="true" prefHeight="28.0" prefWidth="128.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <CheckBox fx:id="manualCalibrationCheckbox" mnemonicParsing="false" text="Manual" GridPane.halignment="LEFT" />
-                                                <CheckBox fx:id="calibCurveCheckbox" mnemonicParsing="false" prefHeight="17.0" prefWidth="113.0" text="Use Calib. Curve" GridPane.rowIndex="3" />
-                                                <CheckBox fx:id="calibImageCheckbox" mnemonicParsing="false" prefHeight="17.0" prefWidth="116.0" text="Use Calib. Image" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                <Button fx:id="importFileButton" disable="true" mnemonicParsing="false" text="Import File" GridPane.rowIndex="4" />
-                                                <NumericTextField fx:id="calibLifetime" disable="true" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Frequency" GridPane.rowIndex="5" />
-                                                <NumericTextField fx:id="frequency" disable="true" prefHeight="25.0" prefWidth="70.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Hz " textAlignment="JUSTIFY" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ns " GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                             </children>
-                                          </GridPane>
-                                       </children>
-                                    </AnchorPane>
-                                    <TextArea fx:id="importedFilenameDisplay" disable="true" editable="false" prefHeight="6.0" prefWidth="268.0" text="Calibration filename&#10;" />
-                            </children>
-                          </VBox>
-                        </content>
-                        </TitledPane>
-                        <TitledPane collapsible="false" text="Export">
-                           <content>
-                              <GridPane prefHeight="92.0" prefWidth="285.0" styleClass="tab-grid-pane" stylesheets="@../../Css/plot.css">
-                                <columnConstraints>
-                                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="138.20001220703125" minWidth="119.0" prefWidth="119.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="123.0" minWidth="10.0" prefWidth="123.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Button fx:id="exportPhasorButton" mnemonicParsing="false" text="Export Phasor Plot" />
-                                    <Button fx:id="exportImageButton" mnemonicParsing="false" prefHeight="23.0" prefWidth="177.0" text="Export Image" textAlignment="RIGHT" GridPane.columnIndex="1" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Folder Path" GridPane.rowIndex="1" />
-                                    <TextField fx:id="exportFolderPath" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                 </children>
-                              </GridPane>
-                           </content>
-                        </TitledPane>
-                    </items>
-                  </SplitPane>
-              </items>
-            </SplitPane>
-         </children>
-      </StackPane>
-   </children>
+                </SplitPane>
+            </children>
+        </StackPane>
+    </children>
 </AnchorPane>

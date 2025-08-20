@@ -4,6 +4,6 @@
 /.settings/
 /.vscode/
 /target/
-
+src/main/resources/Sample_data/
 # Maven #
 target/
