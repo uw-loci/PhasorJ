@@ -80,6 +80,7 @@ public class PluginController {
          */
         intensityDisplay = new ImageDisplay(image_view);
         plt = new PlotPhasor(plotPane, intensityDisplay, null, processor);
+        processor.setPlotPhasor(plt);
 
         /**
          * Adding Image

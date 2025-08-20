@@ -16,6 +16,7 @@ import org.scijava.Context;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class Calibration {
 
@@ -90,14 +91,30 @@ public class Calibration {
         modulation_factor.setMin(Double.MIN_VALUE);
         modulation_factor.setStepSize(0.1);
         modulation_factor.getNumberProperty().addListener((obs, oldVal, newVal) -> {
-            processor.setMod_factor(modulation_factor.getNumberProperty().get());
+            try {
+                processor.setMod_factor(modulation_factor.getNumberProperty().get());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         phase_shift.setMin(-Math.PI);
         phase_shift.setMax(Math.PI);
         phase_shift.setStepSize(0.1);
         phase_shift.getNumberProperty().addListener((obs, oldVal, newVal) -> {
-            processor.setPhase_shift(phase_shift.getNumberProperty().get());
+            try {
+                processor.setPhase_shift(phase_shift.getNumberProperty().get());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         frequency.setMin(0);

@@ -1,12 +1,21 @@
 package org.phasorj.ui;
 
+
 import net.imagej.Dataset;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.Img;
+import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.Views;
+import org.phasorj.ui.Helpers.PlotPhasor;
 import org.scijava.Context;
 import org.scijava.script.DefaultScriptService;
+import org.scijava.script.ScriptInfo;
+import org.scijava.script.ScriptLanguage;
 import org.scijava.script.ScriptModule;
-import org.scijava.script.ScriptService;
+
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +25,6 @@ import java.util.concurrent.Future;
 
 public class PhasorProcessor {
     private final List<DataClass> dataArr;
-
 
     //Calibration parameters
     // autoCalib  = false when user select manual calibration
@@ -28,37 +36,47 @@ public class PhasorProcessor {
     private double calibLT;
 
     //parameters for manual calibration
-    private double mod_factor;
-    private double phase_shift;
+    private double mod_factor = 1;
+    private double phase_shift = 0;
 
-    //  private DefaultScriptService scriptService;
+    private Context ctx;
+    private DefaultScriptService scriptService;
+    private ScriptLanguage scriptLang;
 
-    public PhasorProcessor(){
+    private PlotPhasor plotPhasor;
+
+
+
+    public PhasorProcessor() {
         dataArr = new ArrayList<>();
         frequency = 0;
         calibLT = 0;
     }
 
-    public void addDS(Dataset ds) throws ExecutionException, InterruptedException {
-//        Context ctx = ds.getContext();
-//        scriptService  = ctx.service(DefaultScriptService.class);
-        long[] dims = new long[ds.numDimensions()];
-        ds.dimensions(dims);
-        int rows = (int) dims[1];
-        int cols = (int) dims[0];
+    public void addDS(Dataset ds) throws ExecutionException, InterruptedException, IOException {
+        ctx = ds.getContext();
+        scriptService = ctx.service(DefaultScriptService.class);
 
-        float[][] gData = MockData.generateMockData(rows, cols, 0, 1);
-        float[][] sData = MockData.generateMockData(rows, cols, 0, 0.5f);
+        scriptLang = scriptService.getLanguageByName("Python (scyjava)");
+
+        ScriptInfo scriptInfo = new ScriptInfo(ctx, new File("src\\main\\resources\\python_scripts\\phasor_fiji.py"));
+        scriptInfo.setLanguage(scriptLang);
 
         //getting data using ScriptService
-//        Map<String,Object> args = new HashMap<>();
-//        args.put("img", ds);
+        Map<String, Object> args = new HashMap<>();
+        args.put("img", ds);
+
+        Future<ScriptModule> result = scriptService.run(scriptInfo, true, args);
+
+        Dataset outputDS = (Dataset) result.get().getOutput("output");
+        System.out.println(outputDS.numDimensions());
+
+        var img = outputDS.getImgPlus();
 //
-//        Future<ScriptModule> result = scriptService.run(new File("C:\\Users\\hdoan3\\code\\PhasorJ\\src\\main\\resources\\phasor_fiji.py"), false, args);
-//
-//        Dataset outputDS  = (Dataset) result.get().getOutput("output");
-//        System.out.println(outputDS.numDimensions());
-        dataArr.add(new DataClass(ds, gData, sData));
+        var gData = Views.hyperSlice(img, 2, 1);
+        var sData = Views.hyperSlice(img, 2, 2);
+
+        dataArr.add(new DataClass(ds, (RandomAccessibleInterval<FloatType>) gData, (RandomAccessibleInterval<FloatType>) sData, outputDS));
     }
 
     public double getFrequency() {
@@ -91,18 +109,25 @@ public class PhasorProcessor {
 
     public double getMod_factor() {
         return mod_factor;
+
     }
 
-    public void setMod_factor(double mod_factor) {
+    public void setMod_factor(double mod_factor) throws IOException, ExecutionException, InterruptedException {
         this.mod_factor = mod_factor;
+        updateAllPhasors();
+        plotPhasor.updatePhasorPlot();
+
     }
 
     public double getPhase_shift() {
         return phase_shift;
     }
 
-    public void setPhase_shift(double phase_shift) {
+    public void setPhase_shift(double phase_shift) throws IOException, ExecutionException, InterruptedException {
         this.phase_shift = phase_shift;
+        updateAllPhasors();
+        plotPhasor.updatePhasorPlot();
+
     }
 
     public double getCalibLT() {
@@ -121,7 +146,36 @@ public class PhasorProcessor {
         this.autoCalib = autoCalib;
     }
 
-//    public void setScriptService(DefaultScriptService scriptService){
-//        this.scriptService = scriptService;
-//    }
+    private void recomputePhasor(DataClass entry) throws ExecutionException, InterruptedException {
+
+        ScriptInfo scriptInfo = new ScriptInfo(ctx, new File("src\\main\\resources\\python_scripts\\manualCalib.py"));
+        scriptInfo.setLanguage(scriptLang);
+
+        Map<String, Object> args = new HashMap<>();
+        args.put("mod_factor", mod_factor);
+        args.put("phase_shift", phase_shift);
+        args.put("raw_phasor", entry.getRawPhasor());
+
+        Future<ScriptModule> result = scriptService.run(scriptInfo, true, args);
+        Dataset outputDS = (Dataset) result.get().getOutput("output");
+
+        var img = outputDS.getImgPlus();
+//
+        var gData = Views.hyperSlice(img, 2, 0);
+        var sData = Views.hyperSlice(img, 2, 1);
+
+        entry.updatePhasor((RandomAccessibleInterval<FloatType>) gData,
+                (RandomAccessibleInterval<FloatType>) sData);
+    }
+
+    private void updateAllPhasors() throws ExecutionException, InterruptedException, IOException {
+        for (DataClass entry : dataArr) {
+            recomputePhasor(entry);
+        }
+    }
+
+    public void setPlotPhasor(PlotPhasor plot) {
+        this.plotPhasor = plot;
+    }
+
 }
