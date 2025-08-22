@@ -478,7 +478,7 @@ public class PlotPhasor {
 
     private void drawPhasorPoints() {
         plotGC.setFill(Color.BLUE);
-        double pointSize = 2 / scaleFactor;
+        double pointSize = 1 / scaleFactor;
 
         for (PhasorPoint point : phasorPoints) {
             if (point.g != 0 || point.s != 0) { // Skip zero points
@@ -574,8 +574,8 @@ public class PlotPhasor {
                 float s = sAccess.get().getRealFloat();
 
                 // Get spatial coordinates
-                int imageX = (int) gCursor.getIntPosition(0);
-                int imageY = (int) gCursor.getIntPosition(1);
+                int imageX = gCursor.getIntPosition(0);
+                int imageY = gCursor.getIntPosition(1);
 
                 phasorPoints.add(new PhasorPoint(g, s, imageX, imageY));
             }

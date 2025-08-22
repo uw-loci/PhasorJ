@@ -143,12 +143,9 @@ public class PluginController {
      * Sum the datasetView along the lifetime axis and load the image to the ImageView
      * */
     public void displayOriginalImage() {
-
         RandomAccessibleInterval<FloatType> originalImg = processDataset(datasetView.getData());
         summedIntensity = ImageDisplay.sumIntensity(originalImg, 2);
-
         ImageDisplay.loadAnotatedIntensityImage(Views.hyperSlice(summedIntensity, 2, 0), intensityDisplay);
-
     }
 
     /**

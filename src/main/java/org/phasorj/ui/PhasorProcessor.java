@@ -91,8 +91,60 @@ public class PhasorProcessor {
         return calibDS;
     }
 
-    public void setCalibImG(Dataset ds) {
+    public void setCalibImG(Dataset ds, Runnable onComplete){
         this.calibDS = ds;
+        this.autoCalib = true;
+
+        // Create background task for heavy processing
+        javafx.concurrent.Task<Void> processingTask = new javafx.concurrent.Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    System.out.println("Starting phasor recalculation...");
+                    updateAllPhasors();
+                    System.out.println("Phasor recalculation completed");
+                    return null;
+                } catch (Exception e) {
+                    System.err.println("Error during phasor recalculation: " + e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                // Update UI on JavaFX thread
+                javafx.application.Platform.runLater(() -> {
+                    if (plotPhasor != null) {
+                        plotPhasor.updatePhasorPlot();
+                    }
+                    if (onComplete != null) {
+                        onComplete.run();
+                    }
+                    System.out.println("Phasor plot updated successfully");
+                });
+            }
+
+            @Override
+            protected void failed() {
+                super.failed();
+                Throwable exception = getException();
+                javafx.application.Platform.runLater(() -> {
+                    System.err.println("Failed to process calibration: " + exception.getMessage());
+                    // Show error to user
+                    javafx.scene.control.Alert error = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                    error.setHeaderText("Processing Error");
+                    error.setContentText("Failed to process calibration image: " + exception.getMessage());
+                    error.showAndWait();
+                });
+            }
+        };
+
+        // Run processing in background thread
+        Thread processingThread = new Thread(processingTask);
+        processingThread.setDaemon(true);
+        processingThread.start();
     }
 
     public List<DataClass> getEntries() {
@@ -114,6 +166,7 @@ public class PhasorProcessor {
 
     public void setMod_factor(double mod_factor) throws IOException, ExecutionException, InterruptedException {
         this.mod_factor = mod_factor;
+        autoCalib = false;
         updateAllPhasors();
         plotPhasor.updatePhasorPlot();
 
@@ -125,6 +178,7 @@ public class PhasorProcessor {
 
     public void setPhase_shift(double phase_shift) throws IOException, ExecutionException, InterruptedException {
         this.phase_shift = phase_shift;
+        autoCalib = false;
         updateAllPhasors();
         plotPhasor.updatePhasorPlot();
 
@@ -146,7 +200,7 @@ public class PhasorProcessor {
         this.autoCalib = autoCalib;
     }
 
-    private void recomputePhasor(DataClass entry) throws ExecutionException, InterruptedException {
+    private void recomputePhasorManual(DataClass entry) throws ExecutionException, InterruptedException {
 
         ScriptInfo scriptInfo = new ScriptInfo(ctx, new File("src\\main\\resources\\python_scripts\\manualCalib.py"));
         scriptInfo.setLanguage(scriptLang);
@@ -160,7 +214,25 @@ public class PhasorProcessor {
         Dataset outputDS = (Dataset) result.get().getOutput("output");
 
         var img = outputDS.getImgPlus();
-//
+        var gData = Views.hyperSlice(img, 2, 0);
+        var sData = Views.hyperSlice(img, 2, 1);
+
+        entry.updatePhasor((RandomAccessibleInterval<FloatType>) gData,
+                (RandomAccessibleInterval<FloatType>) sData);
+    }
+
+    private void recomputePhasorAuto(DataClass entry) throws ExecutionException, InterruptedException {
+        ScriptInfo scriptInfo = new ScriptInfo(ctx, new File("src\\main\\resources\\python_scripts\\autoCalib.py"));
+        scriptInfo.setLanguage(scriptLang);
+        Map<String, Object> args = new HashMap<>();
+        args.put("raw_phasor", entry.getRawPhasor());
+        args.put("calib_img", calibDS);
+        System.out.println(calibDS.numDimensions());
+
+        Future<ScriptModule> result = scriptService.run(scriptInfo, true, args);
+        Dataset outputDS = (Dataset) result.get().getOutput("output");
+
+        var img = outputDS.getImgPlus();
         var gData = Views.hyperSlice(img, 2, 0);
         var sData = Views.hyperSlice(img, 2, 1);
 
@@ -170,7 +242,11 @@ public class PhasorProcessor {
 
     private void updateAllPhasors() throws ExecutionException, InterruptedException, IOException {
         for (DataClass entry : dataArr) {
-            recomputePhasor(entry);
+            if (autoCalib && calibDS != null) {
+                recomputePhasorAuto(entry);
+            } else {
+                recomputePhasorManual(entry);
+            }
         }
     }
 
