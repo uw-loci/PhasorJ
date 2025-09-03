@@ -1,4 +1,4 @@
-package org.phasorj.ui.Helpers;
+package org.phasorj.ui.controllerHelpers;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -151,18 +151,6 @@ public class ImageDisplay
             //resize with paren
         Bounds parentBounds = view.getParent().getLayoutBounds();
         fitSize(parentBounds.getWidth() - 10, parentBounds.getHeight() - 10);
-//
-//
-//        writableImage = new WritableImage(imgW, imgH);
-//
-//        // Copy pixels from ARGBScreenImage to WritableImage
-//        int[] pixels = screenImage.getData(); // get pixel array
-//        writableImage.getPixelWriter().setPixels(0, 0, imgW, imgH,
-//                javafx.scene.image.PixelFormat.getIntArgbPreInstance(),
-//                pixels, 0, imgW);
-//
-//        view.setImage(writableImage);
-        // force update as content may change
         lastReloadPixScale = Double.MIN_VALUE;
         reloadImageIfNecessary();
     }

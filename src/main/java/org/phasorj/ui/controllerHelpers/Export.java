@@ -1,4 +1,4 @@
-package org.phasorj.ui.Helpers;
+package org.phasorj.ui.controllerHelpers;
 
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;

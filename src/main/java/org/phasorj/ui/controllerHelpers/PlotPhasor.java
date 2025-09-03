@@ -1,4 +1,4 @@
-package org.phasorj.ui.Helpers;
+package org.phasorj.ui.controllerHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ import javafx.scene.transform.Affine;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.real.FloatType;
 
 import org.phasorj.ui.DataClass;
@@ -52,6 +53,16 @@ public class PlotPhasor {
     private double zoomBoxStartY = 0;
     private double zoomBoxCurrentX = 0;
     private double zoomBoxCurrentY = 0;
+
+    // Circle cursor variables
+    private boolean showCircleCursor = true;
+    private double cursorScreenX = 0;
+    private double cursorScreenY = 0;
+    private boolean cursorVisible = false;
+    private double cursorCircleRadius = 10;
+    private static final double CURSOR_LINE_LENGTH = 15;
+    private static final double MIN_CURSOR_RADIUS = 2;
+    private static final double MAX_CURSOR_RADIUS = 300;
 
     // UI overlay toggle
     private boolean showOverlay = true;
@@ -117,16 +128,17 @@ public class PlotPhasor {
         overlayCanvas.setOnMousePressed(this::handleMousePressed);
         overlayCanvas.setOnMouseDragged(this::handleMouseDragged);
         overlayCanvas.setOnMouseReleased(this::handleMouseReleased);
+        overlayCanvas.setOnMouseMoved(this::handleMouseMoved);
+        overlayCanvas.setOnMouseEntered(this::handleMouseEntered);
+        overlayCanvas.setOnMouseExited(this::handleMouseExited);
         overlayCanvas.setOnScroll(this::handleScroll);
 
         overlayCanvas.setOnKeyPressed(this::handleKeyPressed);
         plotPane.setOnKeyPressed(this::handleKeyPressed);
 
-        // FIXED: Make both focusTraversable
         overlayCanvas.setFocusTraversable(true);
         plotPane.setFocusTraversable(true);
 
-        // Clear existing content and add canvases
         plotPane.getChildren().clear();
         plotPane.getChildren().addAll(plotCanvas, overlayCanvas);
 
@@ -181,6 +193,7 @@ public class PlotPhasor {
         scaleFactor = newScale;
 
         redrawPlot();
+        redrawOverlay();
 
         plotPane.requestFocus();
         overlayCanvas.requestFocus();
@@ -201,12 +214,13 @@ public class PlotPhasor {
             redrawOverlay();
         } else if (event.getCode() == KeyCode.Z) {
             toggleZoomBoxMode();
+        } else if (event.getCode() == KeyCode.C) {
+            toggleCircleCursor();
         }
         event.consume();
     }
 
     private void handleMousePressed(MouseEvent event) {
-        // ADDED: Ensure focus when mouse is pressed
         overlayCanvas.requestFocus();
         plotPane.requestFocus();
 
@@ -254,6 +268,13 @@ public class PlotPhasor {
             redrawPlot();
             redrawOverlay();
         }
+
+        // Update cursor position during drag
+        if (showCircleCursor) {
+            cursorScreenX = event.getX();
+            cursorScreenY = event.getY();
+            redrawOverlay();
+        }
     }
 
     private void handleMouseReleased(MouseEvent event) {
@@ -280,27 +301,57 @@ public class PlotPhasor {
         }
     }
 
-    private void handleScroll(ScrollEvent event) {
-        event.consume();
-        if (!isZoomBoxActive) {
-            double delta = (event.getDeltaY() > 0) ? 1.1 : 1 / 1.1;
-            zoomAtPoint(event.getX(), event.getY(), delta);
+    private void handleMouseMoved(MouseEvent event) {
+        if (showCircleCursor) {
+            cursorScreenX = event.getX();
+            cursorScreenY = event.getY();
+            cursorVisible = isInsidePlotArea(event.getX(), event.getY());
+            redrawOverlay();
         }
     }
 
-
-
-    private void zoomAtPoint(double x, double y, double delta) {
-        double newScale = scaleFactor * delta;
-        newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
-
-        if (newScale != scaleFactor) {
-            offsetX = x - (x - offsetX) * (newScale / scaleFactor);
-            offsetY = y - (y - offsetY) * (newScale / scaleFactor);
-            scaleFactor = newScale;
-            redrawPlot();
+    private void handleMouseEntered(MouseEvent event) {
+        if (showCircleCursor) {
+            cursorVisible = true;
             redrawOverlay();
         }
+    }
+
+    private void handleMouseExited(MouseEvent event) {
+        if (showCircleCursor) {
+            cursorVisible = false;
+            redrawOverlay();
+        }
+    }
+
+    private void handleScroll(ScrollEvent event) {
+        event.consume();
+
+        if (showCircleCursor && cursorVisible) {
+            double delta = (event.getDeltaY() > 0) ? 1.2 : 1 / 1.2;
+            double newRadius = cursorCircleRadius * delta;
+
+            cursorCircleRadius = Math.max(MIN_CURSOR_RADIUS, Math.min(MAX_CURSOR_RADIUS, newRadius));
+
+            redrawOverlay();
+        }
+    }
+
+    private void toggleCircleCursor() {
+        showCircleCursor = !showCircleCursor;
+        if (!showCircleCursor) {
+            cursorVisible = false;
+        }
+        redrawOverlay();
+    }
+
+    private boolean isInsidePlotArea(double screenX, double screenY) {
+        // Convert screen coordinates to world coordinates
+        double worldX = (screenX - offsetX) / scaleFactor;
+        double worldY = (screenY - offsetY) / scaleFactor;
+
+        return worldX >= PLOT_LEFT && worldX <= PLOT_RIGHT &&
+                worldY >= PLOT_TOP && worldY <= PLOT_BOTTOM;
     }
 
     private void resetView() {
@@ -326,14 +377,6 @@ public class PlotPhasor {
 
         redrawPlot();
         redrawOverlay();
-    }
-
-    /**
-     * manually request focus - call this from your main application
-     */
-    public void requestFocus() {
-        plotPane.requestFocus();
-        overlayCanvas.requestFocus();
     }
 
     /**
@@ -365,9 +408,15 @@ public class PlotPhasor {
             drawZoomBox();
         }
 
+        // Draw circle cursor if visible
+        if (showCircleCursor && cursorVisible && !isDraggingZoomBox) {
+            drawCircleCursor();
+        }
+
         if (showOverlay) {
             drawInstructions();
         }
+
     }
 
     private void drawPlotContent() {
@@ -450,6 +499,55 @@ public class PlotPhasor {
         overlayGC.fillRect(left, top, right - left, bottom - top);
     }
 
+    private void drawCircleCursor() {
+        if (!isInsidePlotArea(cursorScreenX, cursorScreenY)) {
+            return;
+        }
+
+        double dataX = screenToDataX(cursorScreenX);
+        double dataY = screenToDataY(cursorScreenY);
+
+        overlayGC.setStroke(Color.RED);
+        overlayGC.setLineWidth(1.5);
+
+        overlayGC.strokeOval(cursorScreenX - cursorCircleRadius,
+                cursorScreenY - cursorCircleRadius,
+                2 * cursorCircleRadius, 2 * cursorCircleRadius);
+        highlightImage(imageDisplay, intensity);
+
+    }
+
+    private List<int[]> getPointInsideCursors() {
+        if (!showCircleCursor || !cursorVisible) {
+            return new ArrayList<>();
+        }
+
+        List<int[]> imageCoords = new ArrayList<>();
+
+        // Convert cursor screen position to data coordinates
+        double cursorDataX = screenToDataX(cursorScreenX);
+        double cursorDataY = screenToDataY(cursorScreenY);
+
+        // Convert cursor radius from screen pixels to data coordinates
+        // We need to account for the current zoom level and coordinate system scaling
+        double radiusDataX = cursorCircleRadius / (scaleFactor * PLOT_WIDTH);
+        double radiusDataY = cursorCircleRadius / (scaleFactor * PLOT_HEIGHT) * 0.6; // S axis goes to 0.6
+
+        for (PhasorPoint point : phasorPoints) {
+            // Calculate distance from cursor center to point in data coordinates
+            double deltaX = (point.g - cursorDataX) / radiusDataX;
+            double deltaY = (point.s - cursorDataY) / radiusDataY;
+            double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            // Point is inside if distance is less than 1 (normalized radius)
+            if (distance <= 1.0) {
+                imageCoords.add(new int[]{point.imageX, point.imageY});
+            }
+
+        }
+        System.out.println(imageCoords.size());
+        return imageCoords;
+    }
 
     private void drawUniversalCircle() {
         // Universal circle: semicircle centered at (0.5, 0) with radius 0.5
@@ -496,8 +594,9 @@ public class PlotPhasor {
         String[] instructions = {
                 String.format("Zoom: %.1f%%", scaleFactor * 100),
                 "Right-click + drag: Pan",
-                "Mouse wheel: Zoom" + (isZoomBoxActive ? " (disabled in zoom mode)" : ""),
+                "Mouse wheel: Change circle cursor's size",
                 "Z: Toggle zoom box mode" + (isZoomBoxActive ? " (ON)" : " (OFF)"),
+                "C: Toggle cursor" + (showCircleCursor ? " (ON)" : " (OFF)"),
                 "R: Reset view",
                 "F: Fit to content",
                 "H: Toggle this overlay",
@@ -532,24 +631,23 @@ public class PlotPhasor {
 
     // Helper methods to convert between data coordinates and screen coordinates
     private double dataToScreenX(double dataX) {
-        // Map data x (0 to 1) to screen x (PLOT_LEFT to PLOT_RIGHT)
         return PLOT_LEFT + dataX * PLOT_WIDTH;
     }
 
     private double dataToScreenY(double dataY) {
-        // Map data y (0 to 0.6) to screen y (PLOT_BOTTOM to PLOT_TOP)
         return PLOT_BOTTOM - (dataY / 0.6) * PLOT_HEIGHT;
     }
-//      TODO:: Add circle cursors
-//    private double screenToDataX(double screenX) {
-//        // Convert screen coordinate back to data coordinate
-//        return (screenX - PLOT_LEFT) / PLOT_WIDTH;
-//    }
-//
-//    private double screenToDataY(double screenY) {
-//        // Convert screen coordinate back to data coordinate
-//        return (PLOT_BOTTOM - screenY) / PLOT_HEIGHT * 0.6;
-//    }
+
+    private double screenToDataX(double screenX) {
+
+        double worldX = (screenX - offsetX) / scaleFactor;
+        return (worldX - PLOT_LEFT) / PLOT_WIDTH;
+    }
+
+    private double screenToDataY(double screenY) {
+        double worldY = (screenY - offsetY) / scaleFactor;
+        return (PLOT_BOTTOM - worldY) / PLOT_HEIGHT * 0.6;
+    }
 
     public void updatePhasorPlot() {
         updatePhasorData();
@@ -582,5 +680,20 @@ public class PlotPhasor {
         }
     }
 
+    private void highlightImage(ImageDisplay imageDisplay, RandomAccessibleInterval<FloatType> intensityImage){
+        List<int[]> coords = getPointInsideCursors();
+        imageDisplay.setImage(intensityImage, ImageDisplay.INTENSITY_CONV, (srcRA, lutedRA) -> {
+            long x = srcRA.getLongPosition(0);
+            long y = srcRA.getLongPosition(1);
 
+            for (int[] coord : coords) {
+                if (coord[0] == y && coord[1] == x) {
+                    ARGBType redPixel = new ARGBType();
+                    redPixel.set(0xFFFF0000); // Red color (ARGB format: alpha=255, red=255, green=0, blue=0)
+                    return redPixel;
+                }
+            }
+            return lutedRA.get();
+        });
+    }
 }

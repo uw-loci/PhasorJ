@@ -6,7 +6,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
-import org.phasorj.ui.Helpers.PlotPhasor;
+import org.phasorj.ui.controllerHelpers.PlotPhasor;
 import org.scijava.Context;
 import org.scijava.script.DefaultScriptService;
 import org.scijava.script.ScriptInfo;

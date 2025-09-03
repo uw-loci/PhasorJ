@@ -16,10 +16,10 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.controlsfx.control.CheckListView;
-import org.phasorj.ui.Helpers.Calibration;
-import org.phasorj.ui.Helpers.Export;
-import org.phasorj.ui.Helpers.ImageDisplay;
-import org.phasorj.ui.Helpers.PlotPhasor;
+import org.phasorj.ui.controllerHelpers.Calibration;
+import org.phasorj.ui.controllerHelpers.Export;
+import org.phasorj.ui.controllerHelpers.ImageDisplay;
+import org.phasorj.ui.controllerHelpers.PlotPhasor;
 import org.phasorj.ui.controls.NumericSpinner;
 import org.phasorj.ui.controls.NumericTextField;
 
@@ -27,7 +27,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.scijava.Context;
 
-import static org.phasorj.ui.Helpers.ImageDisplay.processDataset;
+import static org.phasorj.ui.controllerHelpers.ImageDisplay.processDataset;
 
 public class PluginController {
     private Context ctx;

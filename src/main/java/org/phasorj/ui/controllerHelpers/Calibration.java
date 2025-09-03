@@ -1,4 +1,4 @@
-package org.phasorj.ui.Helpers;
+package org.phasorj.ui.controllerHelpers;
 
 import io.scif.services.DatasetIOService;
 import javafx.application.Platform;
