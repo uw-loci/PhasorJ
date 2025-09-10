@@ -84,14 +84,9 @@ public class PlotPhasor {
         dataManager.updateData();
     }
 
-    // Convenience methods for external access
-    public void resetView() {
-        transform.reset();
-        plotRenderer.redrawAll();
+    public PlotInteractionHandler getInteractionHandler() {
+        return this.interactionHandler;
     }
 
-    public void fitToContent() {
-        transform.fitToContent(plotCanvas.getWidth(), plotCanvas.getHeight());
-        plotRenderer.redrawAll();
-    }
+
 }

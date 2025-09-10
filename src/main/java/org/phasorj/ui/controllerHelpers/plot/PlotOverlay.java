@@ -61,15 +61,43 @@ public class PlotOverlay {
     }
 
     private void drawCircleCursor() {
-        if (!transform.isInsidePlotArea(cursorX, cursorY)) {
-            return;
-        }
-
         overlayGC.setStroke(Color.RED);
         overlayGC.setLineWidth(1.5);
 
-        overlayGC.strokeOval(cursorX - cursorRadius, cursorY - cursorRadius,
-                2 * cursorRadius, 2 * cursorRadius);
+        // Draw the circle without any area restrictions
+        // This allows the cursor to cover the entire canvas/plot area
+        double circleX = cursorX - cursorRadius;
+        double circleY = cursorY - cursorRadius;
+        double circleDiameter = 2 * cursorRadius;
+
+        // Optional: Add bounds checking to prevent drawing outside canvas
+        double canvasWidth = overlayGC.getCanvas().getWidth();
+        double canvasHeight = overlayGC.getCanvas().getHeight();
+
+        // Only draw if any part of the circle would be visible on canvas
+        if (circleX + circleDiameter >= 0 && circleX <= canvasWidth &&
+                circleY + circleDiameter >= 0 && circleY <= canvasHeight) {
+
+            overlayGC.strokeOval(circleX, circleY, circleDiameter, circleDiameter);
+
+            // Optional: Add crosshair at center for better precision
+            drawCrosshair();
+        }
+    }
+
+    private void drawCrosshair() {
+        double crosshairSize = Math.min(cursorRadius * 0.3, 10); // Small crosshair
+
+        overlayGC.setStroke(Color.RED);
+        overlayGC.setLineWidth(1.0);
+
+        // Horizontal line
+        overlayGC.strokeLine(cursorX - crosshairSize, cursorY,
+                cursorX + crosshairSize, cursorY);
+
+        // Vertical line
+        overlayGC.strokeLine(cursorX, cursorY - crosshairSize,
+                cursorX, cursorY + crosshairSize);
     }
 
     private void drawInstructions() {

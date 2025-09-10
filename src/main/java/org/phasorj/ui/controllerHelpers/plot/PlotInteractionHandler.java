@@ -3,12 +3,15 @@ package org.phasorj.ui.controllerHelpers.plot;
 import java.util.List;
 
 import javafx.scene.canvas.Canvas;
-import javafx.scene.input.KeyCode;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.real.FloatType;
@@ -54,6 +57,9 @@ public class PlotInteractionHandler {
 
     // UI overlay toggle
     private boolean showOverlay = true;
+
+    private Canvas highlightOverlay;
+    private boolean highlightOverlaySetup = false;
 
     public PlotInteractionHandler(Canvas overlayCanvas, StackPane plotPane, PlotTransform transform,
                                   PlotRenderer renderer, PhasorDataManager dataManager,
@@ -167,6 +173,7 @@ public class PlotInteractionHandler {
         if (showCircleCursor) {
             cursorVisible = false;
             updateRendererCursorState();
+            clearHighlights();
         }
     }
 
@@ -204,6 +211,7 @@ public class PlotInteractionHandler {
         showCircleCursor = !showCircleCursor;
         if (!showCircleCursor) {
             cursorVisible = false;
+            clearHighlights();
         }
         updateRendererCursorState();
     }
@@ -280,15 +288,16 @@ public class PlotInteractionHandler {
         if (showCircleCursor) {
             cursorScreenX = x;
             cursorScreenY = y;
-            cursorVisible = transform.isInsidePlotArea(x, y);
+           // cursorVisible = transform.isInsidePlotArea(x, y);
             updateRendererCursorState();
 
             if (cursorVisible) {
-                highlightImagePixels();
+                updateHighlights(); // Replace highlightImagePixels() with this
+            } else {
+                clearHighlights(); // Clear when cursor not visible
             }
         }
     }
-
     private void updateRendererZoomBoxState() {
         renderer.setZoomBoxState(isZoomBoxActive, isDraggingZoomBox,
                 zoomBoxStartX, zoomBoxStartY, zoomBoxCurrentX, zoomBoxCurrentY);
@@ -340,4 +349,95 @@ public class PlotInteractionHandler {
 
         return coords;
     }
+
+    public void setupHighlightOverlay(Pane imageParent) {
+        if (highlightOverlaySetup) return;
+
+        highlightOverlay = new Canvas();
+        highlightOverlay.setMouseTransparent(true); // Let mouse events pass through
+
+        // Get the ImageView to match its size
+        ImageView imageView = imageDisplay.getView();
+
+        // Don't bind any properties - just set initial size and let resize listener handle updates
+        highlightOverlay.setWidth(imageView.getFitWidth());
+        highlightOverlay.setHeight(imageView.getFitHeight());
+
+        // For AnchorPane, set the anchors to fill the container like the ImageView
+        if (imageParent instanceof javafx.scene.layout.AnchorPane) {
+            javafx.scene.layout.AnchorPane anchorParent = (javafx.scene.layout.AnchorPane) imageParent;
+            anchorParent.getChildren().add(highlightOverlay);
+
+            // Set anchors to fill the container (same as ImageView in your FXML)
+            javafx.scene.layout.AnchorPane.setTopAnchor(highlightOverlay, 0.0);
+            javafx.scene.layout.AnchorPane.setBottomAnchor(highlightOverlay, 0.0);
+            javafx.scene.layout.AnchorPane.setLeftAnchor(highlightOverlay, 0.0);
+            javafx.scene.layout.AnchorPane.setRightAnchor(highlightOverlay, 0.0);
+        } else {
+            // For other container types, just add it
+            imageParent.getChildren().add(highlightOverlay);
+        }
+
+        // Add listeners to update canvas size when ImageView size changes
+        imageView.fitWidthProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                highlightOverlay.setWidth(newVal.doubleValue());
+            }
+        });
+
+        imageView.fitHeightProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                highlightOverlay.setHeight(newVal.doubleValue());
+            }
+        });
+
+        highlightOverlaySetup = true;
+    }
+
+    private void updateHighlights() {
+        if (highlightOverlay == null) return;
+
+        GraphicsContext gc = highlightOverlay.getGraphicsContext2D();
+        gc.clearRect(0, 0, highlightOverlay.getWidth(), highlightOverlay.getHeight());
+
+        if (!showCircleCursor || intensity == null) {
+            return;
+        }
+
+        // Convert cursor position to data coordinates
+        double cursorDataX = transform.screenToDataX(cursorScreenX);
+        double cursorDataY = transform.screenToDataY(cursorScreenY);
+
+        List<int[]> coords = getPointsInsideCursor();
+
+        if (coords.isEmpty()) return;
+
+        // Calculate pixel size on screen
+        double canvasWidth = highlightOverlay.getWidth();
+        double canvasHeight = highlightOverlay.getHeight();
+        double pixelWidth = canvasWidth / intensity.dimension(0);
+        double pixelHeight = canvasHeight / intensity.dimension(1);
+
+        // Set highlight style
+        gc.setFill(Color.RED.deriveColor(0, 1, 1, 0.6));
+        gc.setStroke(Color.RED.deriveColor(0, 1, 1, 0.8));
+        gc.setLineWidth(0.5);
+
+        // Draw highlights for each coordinate
+        for (int[] coord : coords) {
+            double screenX = coord[0] * pixelWidth;
+            double screenY = coord[1] * pixelHeight;
+
+            gc.fillRect(screenX, screenY, pixelWidth, pixelHeight);
+            gc.strokeRect(screenX, screenY, pixelWidth, pixelHeight);
+        }
+    }
+    private void clearHighlights() {
+        if (highlightOverlay == null) return;
+
+        GraphicsContext gc = highlightOverlay.getGraphicsContext2D();
+        gc.clearRect(0, 0, highlightOverlay.getWidth(), highlightOverlay.getHeight());
+    }
+
+
 }

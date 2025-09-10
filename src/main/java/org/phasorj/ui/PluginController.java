@@ -80,8 +80,7 @@ public class PluginController {
         /**
          * Image Display
          */
-        intensityDisplay = new ImageDisplay(image_view);
-        plt = new PlotPhasor(plotPane, intensityDisplay, null, processor);
+        setupImageDisplayWithHighlights();
         processor.setPlotPhasor(plt);
 
         /**
@@ -174,5 +173,21 @@ public class PluginController {
                 frequency,
                 processor);
 
+    }
+
+    private void setupImageDisplayWithHighlights() {
+        // Get the AnchorPane that contains the ImageView from your FXML
+        AnchorPane imageContainer = (AnchorPane) image_view.getParent();
+
+        // Create the intensity display
+        intensityDisplay = new ImageDisplay(image_view);
+
+        // Create PlotPhasor with the intensity display
+        plt = new PlotPhasor(plotPane, intensityDisplay, null, processor);
+
+        // Setup the highlight overlay after PlotPhasor is created
+        if (plt.getInteractionHandler() != null) {
+            plt.getInteractionHandler().setupHighlightOverlay(imageContainer);
+        }
     }
 }

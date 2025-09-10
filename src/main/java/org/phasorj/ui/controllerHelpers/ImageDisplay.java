@@ -287,4 +287,9 @@ public class ImageDisplay
             }
     }
 
+    public ImageView getView() {
+        return view;
+    }
+
+
 }
