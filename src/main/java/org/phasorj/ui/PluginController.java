@@ -2,11 +2,13 @@ package org.phasorj.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
 import io.scif.services.DatasetIOService;
 import javafx.scene.chart.LineChart;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import net.imagej.Dataset;
@@ -97,7 +99,7 @@ public class PluginController {
                     processor.addDS(newDS);
                  //   dsList.getItems().add(newDS.getName());
                     plt.updatePhasorPlot();
-                } catch (IOException | ExecutionException | InterruptedException ex) {
+                } catch (IOException | ExecutionException | InterruptedException | URISyntaxException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -129,7 +131,7 @@ public class PluginController {
         this.ctx = ctx;
     }
 
-    public void loadDatasetView(DatasetView datasetView) throws ExecutionException, InterruptedException, IOException {
+    public void loadDatasetView(DatasetView datasetView) throws ExecutionException, InterruptedException, IOException, URISyntaxException {
         this.datasetView = datasetView;
         processor.addDS(datasetView.getData());
    //     dsList.getItems().add(datasetView.getData().getName());

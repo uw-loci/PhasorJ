@@ -13,6 +13,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
@@ -29,7 +30,7 @@ public class PhasorJCommand implements Command {
         runAndWait(() -> {
             try {
                 loadUI();
-            } catch (IOException | ExecutionException | InterruptedException e) {
+            } catch (IOException | ExecutionException | InterruptedException | URISyntaxException e) {
                 throw new RuntimeException("Failed to load UI", e);
             }
         });
@@ -38,7 +39,7 @@ public class PhasorJCommand implements Command {
     /***
      * Load the FXML layout, call main functions in the controller, and show the Stage
      */
-        private void loadUI() throws IOException, ExecutionException, InterruptedException {
+        private void loadUI() throws IOException, ExecutionException, InterruptedException, URISyntaxException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/phasorj/plugin-layout.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 

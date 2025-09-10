@@ -16,6 +16,8 @@ import org.scijava.script.ScriptModule;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,29 +55,30 @@ public class PhasorProcessor {
         calibLT = 0;
     }
 
-    public void addDS(Dataset ds) throws ExecutionException, InterruptedException, IOException {
+    public void addDS(Dataset ds) throws ExecutionException, InterruptedException, IOException, URISyntaxException {
         ctx = ds.getContext();
         scriptService = ctx.service(DefaultScriptService.class);
-
         scriptLang = scriptService.getLanguageByName("Python (scyjava)");
+        ScriptInfo scriptInfo;
 
-        ScriptInfo scriptInfo = new ScriptInfo(ctx, new File("src\\main\\resources\\python_scripts\\phasor_fiji.py"));
+        URL resourceUrl = getClass().getClassLoader().getResource("python_scripts/phasor_fiji.py");
+        if (resourceUrl != null) {
+            scriptInfo = new ScriptInfo(ctx, resourceUrl, "phasor_fiji.py");
+        } else {
+            throw new IllegalArgumentException("Could not find phasor_fiji.py in resources");
+        }
+
         scriptInfo.setLanguage(scriptLang);
 
-        //getting data using ScriptService
         Map<String, Object> args = new HashMap<>();
         args.put("img", ds);
-
         Future<ScriptModule> result = scriptService.run(scriptInfo, true, args);
-
         Dataset outputDS = (Dataset) result.get().getOutput("output");
         System.out.println(outputDS.numDimensions());
-
         var img = outputDS.getImgPlus();
-//
+
         var gData = Views.hyperSlice(img, 2, 1);
         var sData = Views.hyperSlice(img, 2, 2);
-
         dataArr.add(new DataClass(ds, (RandomAccessibleInterval<FloatType>) gData, (RandomAccessibleInterval<FloatType>) sData, outputDS));
     }
 
@@ -100,9 +103,7 @@ public class PhasorProcessor {
             @Override
             protected Void call() throws Exception {
                 try {
-                    System.out.println("Starting phasor recalculation...");
                     updateAllPhasors();
-                    System.out.println("Phasor recalculation completed");
                     return null;
                 } catch (Exception e) {
                     System.err.println("Error during phasor recalculation: " + e.getMessage());
@@ -200,9 +201,14 @@ public class PhasorProcessor {
         this.autoCalib = autoCalib;
     }
 
-    private void recomputePhasorManual(DataClass entry) throws ExecutionException, InterruptedException {
-
-        ScriptInfo scriptInfo = new ScriptInfo(ctx, new File("src\\main\\resources\\python_scripts\\manualCalib.py"));
+    private void recomputePhasorManual(DataClass entry) throws ExecutionException, InterruptedException, IOException {
+        ScriptInfo scriptInfo;
+        URL resourceUrl = getClass().getClassLoader().getResource("python_scripts/manualCalib.py");
+        if (resourceUrl != null) {
+            scriptInfo = new ScriptInfo(ctx, resourceUrl, "phasor_fiji.py");
+        } else {
+            throw new IllegalArgumentException("Could not find phasor_fiji.py in resources");
+        }
         scriptInfo.setLanguage(scriptLang);
 
         Map<String, Object> args = new HashMap<>();
@@ -221,9 +227,14 @@ public class PhasorProcessor {
                 (RandomAccessibleInterval<FloatType>) sData);
     }
 
-    private void recomputePhasorAuto(DataClass entry) throws ExecutionException, InterruptedException {
-        ScriptInfo scriptInfo = new ScriptInfo(ctx, new File("src\\main\\resources\\python_scripts\\autoCalib.py"));
-        scriptInfo.setLanguage(scriptLang);
+    private void recomputePhasorAuto(DataClass entry) throws ExecutionException, InterruptedException, IOException {
+        ScriptInfo scriptInfo;
+        URL resourceUrl = getClass().getClassLoader().getResource("python_scripts/autoCalib.py");
+        if (resourceUrl != null) {
+            scriptInfo = new ScriptInfo(ctx, resourceUrl, "phasor_fiji.py");
+        } else {
+            throw new IllegalArgumentException("Could not find phasor_fiji.py in resources");
+        }        scriptInfo.setLanguage(scriptLang);
         Map<String, Object> args = new HashMap<>();
         args.put("raw_phasor", entry.getRawPhasor());
         args.put("calib_img", calibDS);
