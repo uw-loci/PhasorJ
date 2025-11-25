@@ -58,7 +58,7 @@ public class PhasorProcessor {
     public void addDS(Dataset ds) throws ExecutionException, InterruptedException, IOException, URISyntaxException {
         ctx = ds.getContext();
         scriptService = ctx.service(DefaultScriptService.class);
-        scriptLang = scriptService.getLanguageByName("Python (scyjava)");
+        scriptLang = scriptService.getLanguageByName("Python");
         ScriptInfo scriptInfo;
 
         URL resourceUrl = getClass().getClassLoader().getResource("python_scripts/phasor_fiji.py");
